@@ -209,7 +209,7 @@ const BrowserSessionContainer: React.FC<BrowserSessionContainerProps> = ({
                   {/* Simple loading animation that will always show when session URL is not available */}
                   <div className="flex flex-col items-center space-y-6 w-full animate-in fade-in slide-in-from-bottom-5 duration-500">
                     <h2 className="text-2xl font-semibold text-white z-10 animate-in fade-in duration-700 delay-500">
-                      Starting Gemini Browser
+                      Starting Browser
                     </h2>
                     <div className="flex flex-col items-center space-y-4 w-full animate-in fade-in duration-700 delay-500">
                       <div className="mt-4 flex justify-center">
@@ -260,7 +260,7 @@ const BrowserSessionContainer: React.FC<BrowserSessionContainerProps> = ({
                     </motion.span>
 
                     <motion.a
-                      href="https://www.browserbase.com/sign-up"
+                      href="#"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 md:px-6 py-2 md:py-3 text-white text-base md:text-lg font-medium mt-4 md:mt-8 inline-block text-center"
@@ -278,7 +278,7 @@ const BrowserSessionContainer: React.FC<BrowserSessionContainerProps> = ({
                       }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Want to try the new model on Browserbase?
+                      Compiling results...
                     </motion.a>
                     <motion.button
                       type="button"

@@ -35,6 +35,8 @@
 
 @layer base {
   :root {
+    /* Custom primary accent color */
+    --primary-accent: #5856fd;
 
     --background: 0 0% 100%;
 

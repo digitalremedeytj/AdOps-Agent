@@ -5,8 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import AnimatedButton from "./components/ui/AnimatedButton";
 import posthog from "posthog-js";
 import ChatFeed from "./components/ChatFeed";
+import QAChatFeed from "./components/QAChatFeed";
 import NavBar from "./components/NavBar";
-import StagehandBanner from "./components/StagehandBanner";
+import CampaignQAForm from "./components/CampaignQAForm";
+import CampaignElementSelector from "./components/CampaignElementSelector";
+import QAResultsDisplay from "./components/QAResultsDisplay";
+import { CampaignElement, QAResult } from "./types/Campaign";
 import { Code, MessageCircle, Search, Grid3x3 } from "lucide-react";
 
 const Tooltip = ({
@@ -48,295 +52,210 @@ const Tooltip = ({
 };
 
 export default function Home() {
-  const [isChatVisible, setIsChatVisible] = useState(() => false);
-  const [initialMessage, setInitialMessage] = useState<string | null>(
-    () => null
-  );
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [currentView, setCurrentView] = useState<'form' | 'selector' | 'chat' | 'results'>('form');
+  const [campaignElements, setCampaignElements] = useState<CampaignElement[]>([]);
+  const [selectedElements, setSelectedElements] = useState<CampaignElement[]>([]);
+  const [qaUrls, setQaUrls] = useState<{ campaignUrl: string; qaUrl: string } | null>(null);
+  const [initialMessage, setInitialMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [qaResults, setQaResults] = useState<QAResult[]>([]);
+  const [qaSummary, setQaSummary] = useState<any>(null);
+  const [qaOverallStatus, setQaOverallStatus] = useState<'PASS' | 'FAIL'>('PASS');
 
-  const startChat = useCallback((finalMessage: string) => {
-    setInitialMessage(finalMessage);
-    setIsChatVisible(true);
-
+  const handleCampaignSubmit = useCallback(async (campaignUrl: string, qaUrl: string) => {
+    setIsLoading(true);
+    setQaUrls({ campaignUrl, qaUrl });
+    
     try {
-      posthog.capture("google_cua_submit_message", {
-        message: finalMessage,
+      const response = await fetch('/api/campaign/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignUrl }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success && data.elements) {
+        setCampaignElements(data.elements);
+        setCurrentView('selector');
+      } else {
+        console.error('Failed to parse campaign:', data.error);
+        // TODO: Show error message to user
+      }
+    } catch (error) {
+      console.error('Error parsing campaign:', error);
+      // TODO: Show error message to user
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleElementSelectionChange = useCallback((elements: CampaignElement[]) => {
+    const selected = elements.filter(el => el.selected);
+    setSelectedElements(selected);
+    console.log('[Element Selection] Selected elements:', selected.length);
+  }, []);
+
+  const handleStartQA = useCallback(async () => {
+    console.log('[Start QA] Called with:', { qaUrls, selectedElementsCount: selectedElements.length });
+    
+    if (!qaUrls || selectedElements.length === 0) {
+      console.log('[Start QA] Missing requirements - qaUrls:', !!qaUrls, 'selectedElements:', selectedElements.length);
+      return;
+    }
+    
+    setIsLoading(true);
+    console.log('[Start QA] Starting QA validation...');
+    
+    // Switch to chat view to show the browser automation in progress
+    const selectedElementsText = selectedElements
+      .map((el, index) => `${index + 1}. ${el.label} (ID: ${el.id})
+   Expected Value: "${el.expectedValue}"`)
+      .join('\n\n');
+    
+    const qaMessage = `Navigate to ${qaUrls.qaUrl} and validate the following ${selectedElements.length} campaign elements:
+
+${selectedElementsText}
+
+For each element:
+1. Locate the corresponding field/value on the page
+2. Compare actual vs expected value
+3. Determine status (PASS/FAIL/WARNING) and confidence (0-100)
+4. Take screenshot if confidence < 80% or status is FAIL
+5. Provide clear notes explaining your findings
+
+After validating all elements, provide your results in JSON format only. Do not include any other text before or after the JSON.
+
+Use this exact JSON structure:
+
+{
+  "validationResults": [
+    {
+      "elementId": "element-1",
+      "elementLabel": "Line Name",
+      "expectedValue": "Yahoo! - Magnite - LG Sports...",
+      "actualValue": "Yahoo! - Magnite - LG Sports...",
+      "status": "PASS",
+      "confidence": 100,
+      "notes": "Exact match found"
+    }
+  ],
+  "summary": {
+    "totalElements": ${selectedElements.length},
+    "passed": 15,
+    "failed": 0,
+    "warnings": 1,
+    "overallStatus": "PASS"
+  }
+}
+
+IMPORTANT: 
+- Only output valid JSON at the end, no additional text
+- Include all ${selectedElements.length} elements in validationResults array
+- Use exact elementId values provided (${selectedElements.map(el => el.id).join(', ')})
+- Status must be exactly "PASS", "FAIL", or "WARNING"
+- Confidence must be integer 0-100
+- Provide clean actualValue without "Expected:" text
+
+Work systematically through each element. Be thorough but efficient.`;
+
+    setInitialMessage(qaMessage);
+    setCurrentView('chat');
+    
+    try {
+      posthog.capture("campaign_qa_started", {
+        elementsCount: selectedElements.length,
+        qaUrl: qaUrls.qaUrl,
       });
     } catch (e) {
       console.error(e);
     }
+    
+    setIsLoading(false);
+  }, [selectedElements, qaUrls]);
+
+  const handleQAComplete = useCallback((results: QAResult[], summary: any, overallStatus: 'PASS' | 'FAIL') => {
+    console.log('[QA Complete] Received results:', results.length, 'items');
+    setQaResults(results);
+    setQaSummary(summary);
+    setQaOverallStatus(overallStatus);
+    setCurrentView('results');
+    
+    try {
+      posthog.capture("campaign_qa_completed", {
+        elementsCount: selectedElements.length,
+        qaUrl: qaUrls?.qaUrl,
+        overallStatus,
+        passedCount: summary.passed,
+        failedCount: summary.failed,
+        warningsCount: summary.warnings,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [selectedElements.length, qaUrls?.qaUrl]);
+
+  const handleBackToForm = useCallback(() => {
+    setCurrentView('form');
+    setCampaignElements([]);
+    setSelectedElements([]);
+    setQaUrls(null);
+    setInitialMessage(null);
   }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Handle CMD+Enter to submit the form when chat is not visible
-      if (!isChatVisible && (e.metaKey || e.ctrlKey) && e.key === "Enter") {
-        e.preventDefault();
-        const form = document.querySelector("form") as HTMLFormElement;
-        if (form) {
-          form.requestSubmit();
-        }
-      }
-
-      // Handle CMD+K to focus input when chat is not visible
-      if (!isChatVisible && (e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        const input = document.querySelector(
-          'input[name="message"]'
-        ) as HTMLInputElement;
-        if (input) {
-          input.focus();
-        }
-      }
-
-      // Handle ESC to close chat when visible
-      if (isChatVisible && e.key === "Escape") {
-        e.preventDefault();
-        setIsChatVisible(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isChatVisible]);
 
   return (
     <AnimatePresence>
-      {!isChatVisible ? (
-        <div className="min-h-screen bg-gray-50 flex flex-col relative">
-          {/* Grid Background */}
-          <div
-            className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
-            style={{
-              backgroundImage: "url(/grid.svg)",
-              backgroundSize: "25%",
-              backgroundPosition: "center",
-              backgroundRepeat: "repeat",
-              opacity: 0.8,
-              position: "fixed",
-            }}
-          ></div>
+      {currentView === 'chat' ? (
+        <QAChatFeed
+          key={`qa-chat-feed-${initialMessage}`}
+          initialMessage={initialMessage}
+          selectedElements={selectedElements}
+          onClose={handleBackToForm}
+          onQAComplete={handleQAComplete}
+        />
+      ) : currentView === 'results' ? (
+        <div className="min-h-screen bg-gray-50">
+          <NavBar />
+          <QAResultsDisplay
+            results={qaResults}
+            summary={qaSummary}
+            overallStatus={qaOverallStatus}
+            onBack={handleBackToForm}
+          />
+        </div>
+      ) : (
+        <div className="min-h-screen bg-gray-100 flex flex-col relative">
           {/* Top Navigation */}
           <NavBar />
 
-          {/* Stagehand Banner */}
-          <StagehandBanner />
-
           {/* Main Content */}
           <main className="flex-1 flex flex-col items-center pt-12 md:pt-16 lg:pt-20 pb-16 md:pb-24 lg:pb-32 px-6 z-10">
-            <div className="w-full max-w-[640px] md:max-w-[800px] lg:max-w-[960px] bg-white border border-[#CAC8C7] shadow-sm z-10">
-              <div className="w-full h-12 md:h-16 bg-white border-b border-[#CAC8C7] flex items-center px-4 md:px-6">
-                <div className="flex items-center gap-2">
-                  <Tooltip text="why would you want to close this?">
-                    <div className="w-3 h-3  bg-red-500 hover:scale-110 transition-transform" />
-                  </Tooltip>
-                  <Tooltip text="s/o to the 🅱️rowserbase devs">
-                    <div className="w-3 h-3  bg-yellow-500 hover:scale-110 transition-transform" />
-                  </Tooltip>
-                  <Tooltip text="@kylejeong21 & @miguel_gonzf were here">
-                    <div className="w-3 h-3  bg-green-500 hover:scale-110 transition-transform" />
-                  </Tooltip>
-                </div>
-              </div>
-
+            <div className="w-full max-w-[640px] md:max-w-[800px] lg:max-w-[960px] bg-white border border-[#CAC8C7] shadow-sm z-10" style={{ borderRadius: '12px' }}>
               <div className="p-8 md:p-10 lg:p-12 flex flex-col items-center gap-8 md:gap-10">
                 <div className="flex flex-col items-center gap-3 md:gap-5">
                   <h1 className="text-2xl md:text-3xl lg:text-4xl font-ppneue text-gray-900 text-center">
-                    Gemini Browser
+                    Campaign QA Tool
                   </h1>
                   <p className="text-base md:text-lg font-ppsupply text-gray-500 text-center">
-                    Hit run to watch AI browse the web.
+                    AI-powered campaign quality assurance
                   </p>
                 </div>
 
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.currentTarget);
-                    const input = e.currentTarget.querySelector(
-                      'input[name="message"]'
-                    ) as HTMLInputElement;
-                    const message = (formData.get("message") as string).trim();
-                    const finalMessage = message || input.placeholder;
-                    startChat(finalMessage);
-                  }}
-                  className="w-full max-w-[720px] md:max-w-[880px] lg:max-w-[1040px] flex flex-col items-center gap-3 md:gap-5"
-                >
-                  <div className="relative w-full">
-                    <input
-                      ref={inputRef}
-                      name="message"
-                      type="text"
-                      placeholder="What's the price of NVIDIA stock?"
-                      className="w-full px-4 py-3 sm:pr-[140px] pr-[100px] border border-[#CAC8C7] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-[#FF3B00] font-ppsupply text-sm md:text-base md:py-5 lg:py-6 transition-all duration-300 focus:pulse-glow-red focus:backdrop-blur-sm focus:bg-opacity-95 focus:bg-white"
-                      style={{
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        backdropFilter: "blur(8px)",
-                      }}
-                    />
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      <AnimatedButton type="submit">Run</AnimatedButton>
-                    </div>
-                  </div>
-                </form>
-                <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-5 w-full">
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                    onClick={() =>
-                      startChat(
-                        "Find the most recently opened non-draft PR on Github for Browserbase's Stagehand project and make sure the combination-evals in the PR validation passed."
-                      )
-                    }
-                    className="p-3 md:p-5 lg:p-6 text-sm md:text-base lg:text-xl text-[#2E191E] border border-[#CAC8C7] hover:border-[#FF3B00] hover:text-[#FF3B00] transition-colors font-ppsupply font-medium text-center overflow-hidden text-ellipsis break-words whitespace-normal md:min-h-[100px] lg:min-h-[120px] flex items-center justify-center backdrop-blur-sm bg-opacity-60 bg-[rgba(245,240,255,0.15)] hover:bg-[rgba(255,59,0,0.05)] rounded-none"
-                  >
-                    <div className="w-full h-full flex flex-row justify-between items-start px-3 py-2 md:px-4 md:py-3 space-y-3">
-                      <span className="text-left">
-                        Review a pull request
-                        <br />
-                        on Github
-                      </span>
-                      <Code className="" size={20} strokeWidth={1.5} />
-                    </div>
-                  </motion.button>
+                {currentView === 'form' && (
+                  <CampaignQAForm onSubmit={handleCampaignSubmit} />
+                )}
 
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.3 }}
-                    onClick={() =>
-                      startChat(
-                        "Go to Hacker News and find the most controversial post from today, then read the top 3 comments and summarize the debate."
-                      )
-                    }
-                    className="p-3 md:p-5 lg:p-6 text-sm md:text-base lg:text-xl text-[#2E191E] border border-[#CAC8C7] hover:border-[#FF3B00] hover:text-[#FF3B00] transition-colors font-ppsupply font-medium text-center overflow-hidden text-ellipsis break-words whitespace-normal md:min-h-[100px] lg:min-h-[120px] flex items-center justify-center backdrop-blur-sm bg-opacity-60 bg-[rgba(245,240,255,0.15)] hover:bg-[rgba(255,59,0,0.05)] rounded-none"
-                  >
-                    <div className="w-full h-full flex flex-row justify-between items-start px-3 py-2 md:px-4 md:py-3">
-                      <span className="text-left">
-                        Browse Hacker News
-                        <br />
-                        for trending debates
-                      </span>
-                      <MessageCircle
-                        size={20}
-                        strokeWidth={1.5}
-                        className="rounded-none"
-                      />
-                    </div>
-                  </motion.button>
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.5 }}
-                    onClick={() =>
-                      startChat(
-                        "Play a game of 2048 on https://www.2048.org/. Just try to win and I'll watch. Good luck!"
-                      )
-                    }
-                    className="p-3 md:p-5 lg:p-6 text-sm md:text-base lg:text-xl text-[#2E191E] border border-[#CAC8C7] hover:border-[#FF3B00] hover:text-[#FF3B00] transition-colors font-ppsupply font-medium text-center overflow-hidden text-ellipsis break-words whitespace-normal md:min-h-[100px] lg:min-h-[120px] flex items-center justify-center backdrop-blur-sm bg-opacity-60 bg-[rgba(245,240,255,0.15)] hover:bg-[rgba(255,59,0,0.05)] rounded-none"
-                  >
-                    <div className="w-full h-full flex flex-row justify-between items-start px-3 py-2 md:px-4 md:py-3 space-y-3">
-                      <span className="text-left">
-                        Play a game of
-                        <br />
-                        2048
-                      </span>
-                      <Grid3x3
-                        size={20}
-                        strokeWidth={1.5}
-                        className="rounded-none"
-                      />
-                    </div>
-                  </motion.button>
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.7 }}
-                    onClick={() =>
-                      startChat(
-                        "Find the current price of Bitcoin and Ethereum."
-                      )
-                    }
-                    className="p-3 md:p-5 lg:p-6 text-sm md:text-base lg:text-xl text-[#2E191E] border border-[#CAC8C7] hover:border-[#FF3B00] hover:text-[#FF3B00] transition-colors font-ppsupply font-medium text-center overflow-hidden text-ellipsis break-words whitespace-normal md:min-h-[100px] lg:min-h-[120px] flex items-center justify-center backdrop-blur-sm bg-opacity-60 bg-[rgba(245,240,255,0.15)] hover:bg-[rgba(255,59,0,0.05)] rounded-none"
-                  >
-                    <div className="w-full h-full flex flex-row justify-between items-start px-3 py-2 md:px-4 md:py-3 space-y-3">
-                      <span className="text-left">
-                        Get the latest crypto prices
-                        <br />
-                      </span>
-                      <Search
-                        size={20}
-                        strokeWidth={1.5}
-                        className="rounded-none"
-                      />
-                    </div>
-                  </motion.button>
-                </div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 1.0 }}
-                  className="text-center text-xs text-gray-500"
-                  onAnimationComplete={() => {
-                    // Focus the input field after the last animation completes
-                    setTimeout(() => {
-                      inputRef.current?.focus();
-                    }, 100);
-                  }}
-                >
-                  <p>Or type your own request</p>
-                </motion.div>
+                {currentView === 'selector' && (
+                  <CampaignElementSelector
+                    elements={campaignElements}
+                    onSelectionChange={handleElementSelectionChange}
+                    onStartQA={handleStartQA}
+                  />
+                )}
               </div>
             </div>
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                duration: 0.5,
-                delay: 0.2,
-                ease: [0.25, 0.1, 0.25, 1.0],
-                staggerChildren: 0.1,
-              }}
-              className="bg-[#28171B] p-4 md:p-6 lg:p-8 mt-8 md:mt-10 w-full max-w-[640px] md:max-w-[800px] lg:max-w-[960px] relative overflow-hidden backdrop-blur-sm bg-opacity-90"
-            >
-              {/* Tech animation background elements */}
-              <motion.div
-                className="absolute inset-0 opacity-10"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="absolute top-0 right-0 sm:w-20 sm:h-20 w-16 h-16 bg-[#FF3B00] rounded-full blur-xl"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-400 rounded-full blur-xl"></div>
-              </motion.div>
-
-              <motion.p
-                className="text-base md:text-lg font-ppsupply text-center text-white relative z-10 font-semibold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                Powered by{" "}
-                <motion.a
-                  href="https://browserbase.com"
-                  className="text-[#FF3B00] hover:underline relative"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  Browserbase & Stagehand
-                </motion.a>{" "}
-              </motion.p>
-            </motion.div>
           </main>
         </div>
-      ) : (
-        <ChatFeed
-          key={`chat-feed-${initialMessage}`}
-          initialMessage={initialMessage}
-          onClose={() => setIsChatVisible(false)}
-        />
       )}
     </AnimatePresence>
   );

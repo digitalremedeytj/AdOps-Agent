@@ -81,11 +81,11 @@ EDGE_CONFIG=your_edge_config_url
 
 ### 4. Start the development server
 ```bash
-pnpm dev
+pnpm dev -- --port 3015
 ```
 
 ### 5. Open your browser
-Navigate to [http://localhost:3000](http://localhost:3000)
+Navigate to [http://localhost:3015](http://localhost:3015)
 
 ## Usage
 

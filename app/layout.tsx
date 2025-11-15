@@ -16,14 +16,14 @@ const ppNeue = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gemini.browserbase.com"),
-  title: "Gemini Browser",
-  description: "Watch AI browse the web, for free",
+  metadataBase: new URL("https://digitalremedy.com"),
+  title: "AdOps Agent",
+  description: "Automating AdOps",
   openGraph: {
     images: ["/og.png"],
-    title: "Gemini Browser",
-    description: "Watch AI browse the web, for free",
-    url: "https://gemini.browserbase.com",
+    title: "AdOps Agent",
+    description: "Automating AdOps",
+    url: "https://digitalremedy.com",
   },
   icons: {
     icon: [

@@ -115,11 +115,11 @@ export async function GET(request: Request) {
         },
         browserbaseSessionCreateParams: {
           projectId: process.env.BROWSERBASE_PROJECT_ID!,
-          proxies: true,
+          proxies: false,
           browserSettings: {
             viewport: {
-              width: 1288,
-              height: 711,
+              width: 1280,
+              height: 720,
             },
           },
         },

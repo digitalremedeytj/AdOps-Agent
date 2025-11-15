@@ -13,7 +13,7 @@ interface NavBarProps {
 }
 
 export default function NavBar({
-  title = "Gemini Browser",
+  title = "AdOps Agent",
   showCloseButton = false,
   onClose,
   showGitHubButton = true,
@@ -31,7 +31,7 @@ export default function NavBar({
     >
       <div className="flex items-center gap-2">
         <a
-          href="https://www.browserbase.com/cua/gemini"
+          href="https://www.digitalremedy.com"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-3 hover:opacity-90 transition-opacity duration-200"
@@ -49,42 +49,6 @@ export default function NavBar({
         </a>
       </div>
       <div className="flex items-center gap-2">
-        <a
-          href="https://www.browserbase.com/cua/gemini"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <button className="flex items-center justify-center px-3 py-2 bg-white gap-1 text-sm font-medium border border-[#F14A1C] transition-all duration-200 hover:bg-[#F14A1C] group h-full">
-            <Layers
-              size={20}
-              className="sm:mr-2 text-[#F14A1C] group-hover:text-white transition-colors duration-200"
-              strokeWidth={2}
-              strokeLinecap="square"
-              strokeLinejoin="miter"
-            />
-            <span className="hidden sm:inline text-[#F14A1C] group-hover:text-white transition-colors duration-200">
-              Deploy
-            </span>
-          </button>
-        </a>
-        {showGitHubButton && (
-          <a
-            href="https://github.com/browserbase/gemini-browser"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <button className="h-fit flex items-center justify-center px-3 py-2 bg-[#1b2128] hover:bg-[#1d232b] gap-1 text-sm font-medium text-white border border-[#CAC8C7] transition-colors duration-200">
-              <Image
-                src="/github.svg"
-                alt="GitHub"
-                width={20}
-                height={20}
-                className="sm:mr-2"
-              />
-              <span className="hidden sm:inline">GitHub</span>
-            </button>
-          </a>
-        )}
         {showCloseButton && onClose && (
           <motion.button
             onClick={onClose}

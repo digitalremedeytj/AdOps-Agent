@@ -4,6 +4,7 @@ interface AnimatedButtonProps {
   type?: "button" | "submit";
   onClick?: () => void;
   className?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }
 
@@ -11,15 +12,31 @@ export default function AnimatedButton({
   type = "button",
   onClick,
   className = "",
+  disabled = false,
   children
 }: AnimatedButtonProps) {
   return (
     <motion.button
       type={type}
       onClick={onClick}
-      className={`absolute right-2 sm:right-5  px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 bg-[#FF3B00] hover:bg-[#FF2200] text-white font-medium transition-colors ${className} group`}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.95 }}
+      disabled={disabled}
+      className={`absolute right-2 sm:right-5  px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 text-white font-medium transition-colors ${className} group`}
+      style={{
+        backgroundColor: 'var(--primary-accent)',
+        borderRadius: '8px',
+      }}
+      onMouseEnter={(e) => {
+        if (!disabled) {
+          e.currentTarget.style.backgroundColor = '#4845e4';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled) {
+          e.currentTarget.style.backgroundColor = 'var(--primary-accent)';
+        }
+      }}
+      whileHover={{ scale: disabled ? 1 : 1.02 }}
+      whileTap={{ scale: disabled ? 1 : 0.95 }}
       transition={{
         type: "spring",
         stiffness: 400,
@@ -44,4 +61,4 @@ export default function AnimatedButton({
       </span>
     </motion.button>
   );
-} 
+}

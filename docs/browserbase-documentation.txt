@@ -1,0 +1,1029 @@
+# null
+
+In this guide, we'll cover the basics of using Browserbase. By the end, you'll run your first browser session and have a basic understanding of how to use Browserbase.
+
+## Creating Your Account
+
+First, you need to [sign up for a Browserbase account](https://www.browserbase.com/sign-up). The free plan includes:
+
+* One browser session running at a time
+* 60 minutes of browser time per month
+
+## Overview Dashboard
+
+The Overview Dashboard is the first page you'll see when you log in to Browserbase and click into a project. It gives you a quick overview of your browser sessions, usage, and status for that project.
+
+<Frame>
+    <img src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=6f92564f152fdbd518557dbb97d66471" alt="" data-og-width="2926" width="2926" data-og-height="1492" height="1492" data-path="images/getting-started/overview.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?w=280&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=6367f7304c84777e4d97590c33a44799 280w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?w=560&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=13b9aefa8e574203f33d2459466f59e7 560w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?w=840&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=19bc58787c284be51f803e3f78fb28f8 840w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?w=1100&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=c417a6f59efdc7d5f9748c736cfcfec9 1100w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?w=1650&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=7eb1ce70dfbca336213b3b26a7433343 1650w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/overview.png?w=2500&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=44dff09f01e8d33aea6038d8cc58ac80 2500w" />
+</Frame>
+
+On the [overview page](https://www.browserbase.com/overview), you'll find:
+
+* **Your project ID and API key are on the right side**
+* List of currently running and recently completed sessions
+* Historical usage statistics
+* Performance metrics
+* Current system status
+
+## Using the Playground
+
+Next, you'll go to the [Playground](https://www.browserbase.com/playground), which provides a quick way to try Browserbase directly in your browser. It's a great way to get started and see how Browserbase works.
+
+<Frame>
+  <video autoPlay loop muted playsInline controls src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/playground.mp4?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=12a3eb78b49d9ebe278e6803eb44d305" data-path="images/getting-started/playground.mp4" />
+</Frame>
+
+1. Navigate to the [Playground](https://www.browserbase.com/playground)
+2. Command + Click on one of the templates in the code editor
+3. Click the "Run" button to start a browser session, this will start a new browser session and run the code in the editor.
+4. Watch the session via the [Live View](/features/session-live-view) on the right and interact with the browser.
+5. Once the session is complete, click the "Stop" button to shut down the browser.
+
+After completing a session in the Playground, click the "View Session" button to open the Session Inspector.
+
+## Session Inspector
+
+You can use the [Session Inspector](/features/session-inspector) to watch sessions in real-time, view replays, or inspect the session logs.
+
+<Frame>
+  <video autoPlay loop muted playsInline controls src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/inspector.mp4?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=ed8469a2868b4c9b4fa173fde4b7e134" data-path="images/getting-started/inspector.mp4" />
+</Frame>
+
+## Sessions List
+
+You can always find a list of your sessions in the [Sessions](https://www.browserbase.com/sessions) tab. From there, you can access the Session Inspector for any session.
+
+<Frame>
+    <img src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=362acb60de4202fb96e0d47414d30448" alt="" data-og-width="2928" width="2928" data-og-height="1378" height="1378" data-path="images/getting-started/sessions.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?w=280&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=2e8da81278f070820697e6289a9d4542 280w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?w=560&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=68f661ee4711a04022268fd4799fd451 560w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?w=840&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=a913fde2b544c6249dc2f428464e4cc7 840w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?w=1100&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=48a75f4510471741ac3e6860d330ef2b 1100w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?w=1650&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=4122190ed5fb2246767616591c030a84 1650w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/sessions.png?w=2500&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=545f7650b88f824be2c19b3bb5f73c53 2500w" />
+</Frame>
+
+If you know your session ID, you can also access the Session Inspector by navigating to `https://www.browserbase.com/sessions/[session-id]`.
+
+## Next Steps
+
+Running your first session in the Playground is a great way to get started. However, you'll likely want to integrate Browserbase into your own codebase.
+
+The first step is to select a browser automation framework you'll want to use to control the browser. Browserbase supports all popular frameworks. As well as many [integrations](/integrations) with popular tools.
+
+Choose the framework that best matches your needs and follow the framework-specific quick start guide to get a Browserbase project setup in your local development environment.
+
+<Info>
+  If you're not sure which framework to use,
+  [Stagehand](/introduction/stagehand) is recommended as it's built and
+  maintained by the Browserbase team.
+</Info>
+
+<CardGroup cols={2}>
+  <Card title="Stagehand" icon="robot" iconType="sharp-solid" href="/introduction/stagehand">
+    **Recommended for AI-Native Workflows**
+
+    * Javascript and Python support
+    * Self-healing page automations
+    * LLM-powered browser control
+    * AI-first architecture
+  </Card>
+
+  <Card title="Playwright" icon="masks-theater" iconType="sharp-solid" href="/introduction/playwright">
+    **Recommended for Traditional Automation**
+
+    * Javascript, Python, Java, and C# support
+    * Static workflow definitions
+    * Robust testing capabilities
+    * Extensive API support
+  </Card>
+
+  <Card title="Puppeteer" icon="code" iconType="sharp-solid" href="/introduction/puppeteer">
+    **Recommended for Puppeteer Users**
+
+    * Javascript support
+    * Static workflow definitions
+    * Robust testing capabilities
+    * Extensive API support
+  </Card>
+
+  <Card title="Selenium" icon="vial" iconType="sharp-solid" href="/introduction/selenium">
+    **Recommended for Selenium Users**
+
+    * JS, Python, Java, C#, and Ruby support
+    * Static workflow definitions
+    * Robust testing capabilities
+    * Extensive API support
+  </Card>
+</CardGroup>
+
+## New to Code? Start with Director
+
+<CardGroup cols={1}>
+  <Card title="Writing browser automation scripts can be tricky if you're just starting out. That's why we built Director." icon="compass" iconType="sharp-solid" href="https://director.ai/">
+    <br />
+
+    Director is the application to turn ideas into workflows. It allows you to use plain English to describe a task you want to automate. It performs the task for you and generates the corresponding code, giving you a ready-to-use script without having to write all the code from scratch.
+
+    <br />
+
+    If you have minimal coding experience or simply want to create a working script as quickly as possible, we recommend starting with [Director](https://director.ai/).
+  </Card>
+</CardGroup>
+
+——
+
+For PLAYWRIGHT:
+
+# Start your first Session with Playwright
+
+<CardGroup cols={2}>
+  <Card title="Get started with a Playwright Node.js template" icon="github" iconType="sharp-solid" href="https://github.com/browserbase/quickstart-playwright-js">
+    Clone this GitHub repo to start using Browserbase with Playwright in Node.
+  </Card>
+
+  <Card title="Get started with a Playwright Python template" icon="github" iconType="sharp-solid" href="https://github.com/browserbase/quickstart-playwright-python">
+    Clone this GitHub repo to start using Browserbase with Playwright in Python.
+  </Card>
+</CardGroup>
+
+<Steps>
+  <Step title="Get your API Key">
+    Your API key and Project ID are displayed in the [Overview Dashboard](https://www.browserbase.com/overview):
+
+    <Frame>
+      <img src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=b9a4d1261a99b7160d615f1d2ee7a6c9" data-og-width="2926" width="2926" data-og-height="1492" height="1492" data-path="images/quickstart/api-key.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=280&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=3f878065fa5444dd528566001c36ca10 280w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=560&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=5810f2883598f95558d42d6054f1e043 560w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=840&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=e8e378a80ec98342250a5ad5b089a761 840w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=1100&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=c2870bf11633597760a1e9340ce9474d 1100w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=1650&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=41abfe5e36aa6a80602bfbfd85bedfcc 1650w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=2500&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=91de29e1a08be400ea2192c12cdfdb77 2500w" />
+    </Frame>
+
+    Then copy your API Key directly from the input and update your `.env` by adding the `BROWSERBASE_API_KEY` entry
+
+    Alternatively, you can temporarily set the environment variable for a single bash command by prefixing it with `BROWSERBASE_API_KEY=<your_api_key>` in your terminal.
+  </Step>
+
+  <Step title="Install Playwright">
+    <Tabs>
+      <Tab title="Node.js">
+        ```bash  theme={null}
+        npm i playwright-core @browserbasehq/sdk
+        ```
+
+        <Note type="warning">
+          Bun does not currently support Playwright.
+        </Note>
+      </Tab>
+
+      <Tab title="Python">
+        ```bash  theme={null}
+        pip install playwright browserbase
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Update your code or clone a template">
+    Running your existing code with Browserbase only requires a few line changes:
+
+    <Tabs>
+      <Tab title="Node.js">
+        ```typescript  theme={null}
+        import { chromium } from "playwright-core";
+        import Browserbase from "@browserbasehq/sdk";
+
+        const bb = new Browserbase({
+          apiKey: process.env.BROWSERBASE_API_KEY
+        });
+
+        (async () => {
+          // Create a new session
+          const session = await bb.sessions.create({
+            projectId: process.env.BROWSERBASE_PROJECT_ID
+          });
+
+          // Connect to the session
+          const browser = await chromium.connectOverCDP(session.connectUrl);
+
+          // Getting the default context to ensure the sessions are recorded.
+          const defaultContext = browser.contexts()[0];
+          const page = defaultContext.pages()[0];
+
+          await page.goto("https://news.ycombinator.com/");
+          await page.close();
+          await browser.close();
+          console.log(`Session complete! View replay at https://browserbase.com/sessions/${session.id}`);
+        })().catch((error) => console.error(error.message));
+        ```
+
+        <Note>Be sure to set your `BROWSERBASE_API_KEY` and `BROWSERBASE_PROJECT_ID` environment variables.</Note>
+      </Tab>
+
+      <Tab title="Python">
+        ```python  theme={null}
+        from playwright.sync_api import sync_playwright, Playwright
+        from browserbase import Browserbase
+        import os
+
+        bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+
+        def run(playwright: Playwright):
+            # Create a session on Browserbase
+            session = bb.sessions.create(project_id=os.environ["BROWSERBASE_PROJECT_ID"])
+
+            # Connect to the remote session
+            chromium = playwright.chromium
+            browser = chromium.connect_over_cdp(session.connect_url)
+            context = browser.contexts[0]
+            page = context.pages[0]
+
+            try:
+                page.goto("https://news.ycombinator.com/")
+                print(page.title())
+            finally:
+                page.close()
+                browser.close()
+                print(f"Session complete! View replay at https://browserbase.com/sessions/{session.id}")
+
+        with sync_playwright() as playwright:
+            run(playwright)
+        ```
+
+        <Note>Be sure to set your `BROWSERBASE_API_KEY` and `BROWSERBASE_PROJECT_ID` environment variables.</Note>
+      </Tab>
+    </Tabs>
+
+    <br />
+  </Step>
+
+  <Step title="Inspect the completed Session">
+    You can find all the recent sessions on the Overview Dashboard, along with essential metrics:
+
+    <Frame>
+      <img src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=2cec5885604d820cc307539e258e6fa6" data-og-width="2926" width="2926" data-og-height="1492" height="1492" data-path="images/quickstart/dashboard.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?w=280&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=aaf9f40599349b82728365d61c9dbb1f 280w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?w=560&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=9c5da83316db9bd4ee2a35fecdc0a3e8 560w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?w=840&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=fe1ff604bcd8fcc7e7fa581c6c6c1623 840w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?w=1100&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=18289a3c42a77fded7f8d69873f29c6d 1100w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?w=1650&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=1282f8db7b163405ae0f4a1e93cf298b 1650w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/dashboard.png?w=2500&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=06fed418ded7be710402ab6e9c6406d6 2500w" />
+    </Frame>
+
+    Select your Session to inspect it with the [Session Inspector](/features/session-inspector).
+  </Step>
+</Steps>
+
+## Start building
+
+<CardGroup cols={2}>
+  <Card title="Using Browser Sessions" icon="browser" iconType="sharp-solid" href="/fundamentals/using-browser-session">
+    Learn how to connect to and interact with browser sessions effectively.
+  </Card>
+
+  <Card title="Managing Sessions" icon="circle-stop" iconType="sharp-solid" href="/fundamentals/manage-browser-session">
+    Understand how to properly end sessions and manage their lifecycle.
+  </Card>
+</CardGroup>
+
+# Create a Browser Session
+
+> Learn how to create and configure browser sessions in Browserbase
+
+## Overview
+
+A browser session represents a single browser instance running in the cloud. It's the fundamental building block of Browserbase, providing an isolated environment for your web automation tasks.
+
+## Creating a Session
+
+Browser sessions are created through the [Sessions API](/reference/api/create-a-session), which gives you full control over configuration and features. After creation, you'll receive a connection URL to use with your preferred automation framework.
+
+<Warning>
+  The create session API is rate limited based on your plan's concurrent session
+  limits. See [Concurrency & Rate
+  Limits](/guides/concurrency-rate-limits) for details on limits and
+  best practices for handling them.
+</Warning>
+
+<Tabs>
+  <Tab title="Node.js">
+    ```typescript  theme={null}
+    import { Browserbase } from "@browserbasehq/sdk";
+
+    const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+    const session = await bb.sessions.create({
+      projectId: process.env.BROWSERBASE_PROJECT_ID!,
+      // Add configuration options here
+    });
+    ```
+  </Tab>
+
+  <Tab title="Python">
+    ```python  theme={null}
+    import os
+    from browserbase import Browserbase
+
+    bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+    session = bb.sessions.create(
+        project_id=os.environ["BROWSERBASE_PROJECT_ID"],
+        # Add configuration options here
+    )
+    ```
+  </Tab>
+
+  <Tab title="cURL">
+    ```bash  theme={null}
+    curl --request POST \
+      --url "https://api.browserbase.com/v1/sessions" \
+      --header "Content-Type: application/json" \
+      --header "x-bb-api-key: $BROWSERBASE_API_KEY" \
+      --data '{
+        "projectId": "'$BROWSERBASE_PROJECT_ID'",
+        // Add configuration options here
+      }'
+    ```
+  </Tab>
+</Tabs>
+
+## Configuration Options
+
+When creating a session, you can configure various settings. For complete API details, see:
+
+* [Create Session API Reference](/reference/api/create-a-session)
+* [Node.js SDK Reference](/reference/sdk/nodejs)
+* [Python SDK Reference](/reference/sdk/python)
+
+### Basic Settings
+
+* **Region** - Decrease latency by choosing where your browser runs using one of our [browser regions](/guides/multi-region)
+* **Viewport** - Set custom screen dimensions for your browser window. Otherwise, the default viewport varies per session
+* **Keep Alive** - Enable [longer-running sessions](/guides/long-running-sessions) that run even after disconnection
+* **Recording** - Enable/disable [session recording](/features/session-replay) (enabled by default)
+* **Logging** - Enable/disable session logging for debugging (enabled by default)
+
+### Advanced Features
+
+* **[Stealth Mode](/features/stealth-mode)** - Configure anti-bot mitigations:
+
+  * Automatic basic fingerprinting (devices, locales, operating systems)
+  * Advanced stealth mode (Scale plan only)
+  * [Proxy settings](/features/proxies)
+  * Captcha solving (enabled by default)
+
+* **[Extensions](/features/browser-extensions)** - Load custom browser extensions to enhance functionality
+
+* **[Browser Context](/features/contexts)** - Configure isolated browsing contexts for session persistence
+
+* **[User Metadata](/features/session-metadata)** - Attach custom data for session organization and filtering
+
+## Next Steps
+
+Once you've created a session, you can:
+
+1. Connect to it using your preferred automation framework - see [Using a Browser Session](/fundamentals/using-browser-session)
+2. Monitor it through the [Session Inspector](/features/session-inspector)
+3. End it manually or let it timeout - see [Manage a Browser Session](/fundamentals/manage-browser-session)
+
+
+# Using a Browser Session
+
+> Learn how to connect to and interact with browser sessions
+
+## Connecting to a Session
+
+Once you [create a session](/fundamentals/create-browser-session), you'll receive a connection URL that you can use with your preferred automation framework. Here's how to connect using our supported frameworks:
+
+<Tabs>
+  <Tab title="Node.js">
+    <CodeGroup>
+      ```typescript Stagehand theme={null}
+      import { Browserbase } from "@browserbasehq/sdk";
+
+      const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+
+      // Create a session
+      const session = await bb.sessions.create({
+        projectId: process.env.BROWSERBASE_PROJECT_ID
+      });
+
+      // Connect and automate
+      const browser = await bb.connect(session.id);
+      ```
+
+      ```typescript Playwright theme={null}
+      import { chromium } from "playwright-core";
+      import { Browserbase } from "@browserbasehq/sdk";
+
+      const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+
+      // Create a session
+      const session = await bb.sessions.create({
+        projectId: process.env.BROWSERBASE_PROJECT_ID
+      });
+
+      const browser = await chromium.connectOverCDP(session.connectUrl);
+      ```
+
+      ```typescript Puppeteer theme={null}
+      import puppeteer from "puppeteer-core";
+      import { Browserbase } from "@browserbasehq/sdk";
+
+      const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+
+      // Create a session
+      const session = await bb.sessions.create({
+        projectId: process.env.BROWSERBASE_PROJECT_ID
+      });
+
+      const browser = await puppeteer.connect({
+        browserWSEndpoint: session.connectUrl
+      });
+      ```
+
+      ```typescript Selenium theme={null}
+      import { Builder } from 'selenium-webdriver';
+      import { Options } from 'selenium-webdriver/chrome';
+      import { Browserbase } from "@browserbasehq/sdk";
+
+      class BrowserbaseConnection {
+        constructor(sessionId) {
+          this.sessionId = sessionId;
+        }
+
+        getHeaders() {
+          return {
+            'x-bb-api-key': process.env.BROWSERBASE_API_KEY,
+            'session-id': this.sessionId
+          };
+        }
+      }
+
+      // Create a session
+      const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+      const session = await bb.sessions.create({
+        projectId: process.env.BROWSERBASE_PROJECT_ID
+      });
+
+      // Create connection with custom headers
+      const connection = new BrowserbaseConnection(session.id);
+
+      // Configure WebDriver
+      const driver = await new Builder()
+        .usingServer(session.seleniumRemoteUrl)
+        .setChromeOptions(new Options())
+        .build();
+
+      // Add custom headers to all requests
+      const originalExecute = driver.executor_.execute.bind(driver.executor_);
+      driver.executor_.execute = async function (command) {
+        command.headers = { ...command.headers, ...connection.getHeaders() };
+        return originalExecute(command);
+      };
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Python">
+    <CodeGroup>
+      ```python Stagehand theme={null}
+      import os
+      from browserbase import Browserbase
+
+      bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+
+      # Create a session
+      session = bb.sessions.create(
+          project_id=os.environ["BROWSERBASE_PROJECT_ID"]
+      )
+
+      # Connect and automate
+      browser = bb.connect(session.id)
+      page = browser.new_page()
+      ```
+
+      ```python Playwright theme={null}
+      import os
+      from playwright.sync_api import sync_playwright
+      from browserbase import Browserbase
+
+      # Create a session
+      bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+      session = bb.sessions.create(
+          project_id=os.environ["BROWSERBASE_PROJECT_ID"]
+      )
+
+      with sync_playwright() as playwright:
+          browser = playwright.chromium.connect_over_cdp(session.connect_url)
+      ```
+
+      ```python Selenium theme={null}
+      import os
+      from selenium import webdriver
+      from selenium.webdriver.remote.webdriver import WebDriver
+      from selenium.webdriver.remote.remote_connection import RemoteConnection
+      from browserbase import Browserbase
+
+      class BrowserbaseConnection(RemoteConnection):
+          """Manage a single session with Browserbase."""
+
+          def __init__(self, session_id, *args, **kwargs):
+              self.session_id = session_id
+              super().__init__(*args, **kwargs)
+
+          def get_remote_connection_headers(self, parsed_url, keep_alive=False):
+              headers = super().get_remote_connection_headers(parsed_url, keep_alive)
+              headers.update({
+                  "x-bb-api-key": os.environ["BROWSERBASE_API_KEY"],
+                  "session-id": self.session_id,
+              })
+              return headers
+
+      # Create a session
+      bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+      session = bb.sessions.create(
+          project_id=os.environ["BROWSERBASE_PROJECT_ID"]
+      )
+
+      # Connect using custom connection class
+      connection = BrowserbaseConnection(
+          session.id,
+          session.selenium_remote_url
+      )
+      driver = webdriver.Remote(
+          command_executor=connection,
+          options=webdriver.ChromeOptions()
+      )
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+### Connection Best Practices
+
+1. **Connection Timeout** - You have 5 minutes to connect to a newly created session before it terminates. To prevent timeouts:
+
+   * Connect promptly after creation
+   * Enable [keep alive](/guides/long-running-sessions) for sessions that need to persist
+   * Use the connection URL immediately after receiving it
+
+2. **Use Default Context** - Always use the default context and page when possible to ensure proper functionality of stealth features:
+
+<Tabs>
+  <Tab title="Node.js">
+    <CodeGroup>
+      ```typescript Stagehand theme={null}
+      const page = await browser.newPage(); // Uses default context automatically
+      ```
+
+      ```typescript Playwright theme={null}
+      const context = browser.contexts()[0];
+      const page = context.pages()[0];
+      ```
+
+      ```typescript Puppeteer theme={null}
+      const page = (await browser.pages())[0];
+      ```
+
+      ```typescript Selenium theme={null}
+      // Uses default context automatically
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Python">
+    <CodeGroup>
+      ```python Stagehand theme={null}
+      page = browser.new_page()  # Uses default context automatically
+      ```
+
+      ```python Playwright theme={null}
+      context = browser.contexts[0]
+      page = context.pages[0]
+      ```
+
+      ```python Selenium theme={null}
+      # Uses default context automatically
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+## Controlling the Browser
+
+Once connected, use your preferred framework's APIs to control the browser. Each framework has its own methods for navigation, interaction, and automation.
+
+<CardGroup>
+  <Card title="Stagehand" icon="robot" iconType="sharp-solid" href="https://docs.stagehand.dev/">
+    Build reliable browser automation with AI-powered element selection and self-healing scripts
+  </Card>
+
+  {" "}
+
+  <Card title="Playwright" icon="masks-theater" iconType="sharp-solid" href="https://playwright.dev/">
+    Create fast, reliable end-to-end tests with built-in auto-waiting and mobile
+    emulation
+  </Card>
+
+  {" "}
+
+  <Card title="Puppeteer" icon="code" iconType="sharp-solid" href="https://pptr.dev/">
+    Headless Chrome automation with a lightweight API and strong DevTools
+    integration
+  </Card>
+
+  <Card title="Selenium" icon="vial" iconType="sharp-solid" href="https://www.selenium.dev">
+    Industry-standard testing framework supporting all major browsers and programming languages
+  </Card>
+</CardGroup>
+
+### Browserbase Features
+
+When running browsers in the cloud, certain operations require special handling through our APIs:
+
+<CardGroup>
+  <Card title="File Downloads" icon="download" href="/features/downloads">
+    Securely retrieve files from your cloud browser session
+  </Card>
+
+  <Card title="Screenshots" icon="camera" href="/features/screenshots">
+    Capture high-quality browser screenshots with custom settings
+  </Card>
+
+  <Card title="PDF Generation" icon="file-pdf" href="/features/screenshots#pdfs">
+    Create PDFs with advanced formatting options
+  </Card>
+
+  <Card title="File Upload" icon="upload" href="/features/uploads">
+    Transfer files directly to your browser session
+  </Card>
+</CardGroup>
+
+### Live View
+
+The Live View feature gives you real-time visibility into your browser sessions through two powerful interfaces:
+
+#### Session Inspector
+
+The [Session Inspector](/features/session-inspector) provides real-time debugging capabilities:
+
+<Frame>
+  <img src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=4f91e77cd6749399ad9723c7f63fd77c" data-og-width="2934" width="2934" data-og-height="1146" height="1146" data-path="images/getting-started/live_inspector.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?w=280&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=ed7396bb765893a0cd1c8820be21370a 280w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?w=560&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=e4a08c0ea590ba6623a2c3098793d0ad 560w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?w=840&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=54a5a4a6646f1ab70c34bc5010c82ed3 840w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?w=1100&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=e2f5e4f2571336cd83821f9bdf489872 1100w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?w=1650&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=b97af5b4d7e8103e24369c3d8d842f90 1650w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/getting-started/live_inspector.png?w=2500&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=2c05d36ee608da4457dd5f351b14dd83 2500w" />
+</Frame>
+
+Monitor your session's activity with:
+
+* Live browser state and interactions
+* Real-time network requests and responses
+* Console output and error tracking
+* Performance metrics and resource usage
+* Session recording and replay
+
+#### Embedded View
+
+Integrate the [Live View](/features/session-live-view) directly into your application to show your users their automated browser sessions in real-time. The Live View enables remote control over the browser, unlocking human-in-the-loop possibilities to handle authentication, captcha, or unexpected errors.
+
+## Ending Your Session
+
+While Browserbase automatically handles session termination when you disconnect, understanding how sessions end is important.
+
+For more details about session termination, timeouts, and best practices for managing session lifecycle, see [Manage a Browser Session](/fundamentals/manage-browser-session).
+
+
+# Manage a Browser Session
+
+> Learn how to manage session termination and inspect completed sessions
+
+While Browserbase automatically handles session termination when you disconnect, understanding how sessions end helps you debug failed runs, manage long-running sessions, optimize resource usage, and investigate timeouts or errors.
+
+## Session Termination
+
+Browser sessions can end in these ways:
+
+1. **Automatic Timeout**
+   Sessions have a default timeout configured at the project level, which can be customized when creating a session. For longer-running tasks, enable [keep alive](/guides/long-running-sessions).
+
+2. **Manual Termination**
+   You can end sessions explicitly by closing the browser programmatically (`browser.close()` or `driver.quit()`), using the Sessions API, or releasing keep-alive sessions when no longer needed.
+
+3. **Unhandled Errors**
+   Unhandled errors in your automation code can cause your script to disconnect from the browser, ending the session prematurely. Common scenarios include network interruptions, uncaught exceptions, or exceeded resource limits.
+
+   To prevent premature termination, make sure to implement proper error handling and cleanup in your code.
+
+## Session Timeout Settings
+
+Configure timeouts at two levels:
+
+**Project Level**
+Set the default timeout for all sessions in your [project settings](https://browserbase.com/settings). This acts as the fallback when no session-specific timeout is set.
+
+**Session Level**
+Override the project timeout for specific sessions when [creating them](/fundamentals/create-browser-session#configuration-options). This gives you fine-grained control over individual session durations.
+
+## Debugging Completed Sessions
+
+The [Session Inspector](/features/session-inspector) is your primary tool for analyzing completed sessions. It provides comprehensive debugging capabilities:
+
+<CardGroup>
+  <Card title="Session Replay" icon="play" href="/features/session-replay">
+    Record and replay browser activity to understand what happened
+  </Card>
+
+  <Card title="Network Monitor" icon="wifi" href="/features/session-inspector#network">
+    Inspect HTTP traffic, responses, and timing
+  </Card>
+
+  <Card title="Console & Logs" icon="terminal" href="/features/session-inspector#console">
+    Review JavaScript output and debug messages
+  </Card>
+
+  <Card title="Performance" icon="gauge-high" href="/features/session-inspector#performance">
+    Track CPU, memory usage, and other metrics
+  </Card>
+</CardGroup>
+
+## Measuring Usage
+
+Track and analyze your browser session usage through multiple interfaces:
+
+**Dashboard**
+Your central hub at [browserbase.com/overview](https://browserbase.com/overview) shows total browser minutes, active sessions, usage trends, and billing information.
+
+**Sessions List**
+Browse your session history at [browserbase.com/sessions](https://browserbase.com/sessions) to view duration, status, and resource consumption for individual sessions.
+
+For programmatic access to these metrics, see the [Measuring Usage Guide](/guides/measuring-usage).
+
+
+# Browser Use Integration
+
+> Utilize Browserbase with Browser Use for advanced browser automation.
+
+Browser Use is a browser automation sdk that uses screenshots to capture the state of the browser and actions to simulate user interactions.
+
+<Note>Browser Use currently only supports Python.</Note>
+
+For typescript, you can use Stagehand instead. [Stagehand](https://stagehand.dev/) is a browser automation sdk that allows you to use natural language to automate the web.
+Checkout the docs [here](https://docs.stagehand.dev/introduction).
+
+## Add Browserbase to your Browser Use
+
+<CardGroup cols={2}>
+  <Card title="Browserbase to your Browser Use" icon="book" iconType="sharp-solid" href="/integrations/browseruse/python">
+    Configure Browserbase to add additional web-browsing capabilities to your
+    Browser Use.
+  </Card>
+
+  <Card title="Try out Stagehand" icon="hand-horns" iconType="sharp-solid" href="https://stagehand.dev/">
+    Stagehand is a browser automation sdk that allows you to use natural language to automate the web.
+    Checkout the docs [here](https://docs.stagehand.dev/introduction).
+  </Card>
+</CardGroup>
+
+# Add web browsing capabilities to Browser Use
+
+> Integrate Browserbase with Browser Use
+
+<Steps titleSize="h3">
+  <Step title="Get your API Key">
+    Visit the [Dashboard's Overview tab](https://www.browserbase.com/overview):
+
+    <Frame>
+      <img src="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=b9a4d1261a99b7160d615f1d2ee7a6c9" data-og-width="2926" width="2926" data-og-height="1492" height="1492" data-path="images/quickstart/api-key.png" data-optimize="true" data-opv="3" srcset="https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=280&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=3f878065fa5444dd528566001c36ca10 280w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=560&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=5810f2883598f95558d42d6054f1e043 560w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=840&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=e8e378a80ec98342250a5ad5b089a761 840w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=1100&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=c2870bf11633597760a1e9340ce9474d 1100w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=1650&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=41abfe5e36aa6a80602bfbfd85bedfcc 1650w, https://mintcdn.com/browserbase/m1Ny8qOvNHvtrY7y/images/quickstart/api-key.png?w=2500&fit=max&auto=format&n=m1Ny8qOvNHvtrY7y&q=85&s=91de29e1a08be400ea2192c12cdfdb77 2500w" />
+    </Frame>
+
+    Then copy and set the `BROWSERBASE_API_KEY` and `BROWSERBASE_PROJECT_ID` environment variables in your `.env` file.
+  </Step>
+
+  <Step title="Install and create a virtual environment with UV">
+    [UV](https://docs.astral.sh/uv/getting-started/installation/) is a modern package manager for Python.
+
+    ```bash  theme={null}
+    uv venv
+    ```
+  </Step>
+
+  <Step title="Install Browserbase and Browser Use">
+    ```bash  theme={null}
+    source .venv/bin/activate # follow the `uv venv` output
+    uv pip install browserbase browser-use langchain-anthropic python-dotenv
+    ```
+  </Step>
+
+  <Step title="Create the Managed Browser Session Class">
+    We'll create a session management class that handles proper browser lifecycle management following Browser Use best practices.
+
+    ```python main.py theme={null}
+    import asyncio
+    import os
+    from dotenv import load_dotenv
+
+    from browserbase import Browserbase
+    from browser_use import Agent
+    from browser_use.browser.session import BrowserSession
+    from browser_use.browser import BrowserProfile
+    from browser_use.llm import ChatOpenAI
+
+    class ManagedBrowserSession:
+        """Context manager for proper BrowserSession lifecycle management"""
+        
+        def __init__(self, cdp_url: str, browser_profile: BrowserProfile):
+            self.cdp_url = cdp_url
+            self.browser_profile = browser_profile
+            self.browser_session = None
+            
+        async def __aenter__(self) -> BrowserSession:
+            try:
+                self.browser_session = BrowserSession(
+                    cdp_url=self.cdp_url,
+                    browser_profile=self.browser_profile,
+                    keep_alive=False,  # Essential for proper cleanup
+                    initialized=False,
+                )
+                
+                await self.browser_session.start()
+                print("✅ Browser session initialized successfully")
+                return self.browser_session
+                
+            except Exception as e:
+                print(f"❌ Failed to initialize browser session: {e}")
+                await self._emergency_cleanup()
+                raise
+        
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            await self._close_session_properly()
+        
+        async def _close_session_properly(self):
+            playwright_instance = None
+            
+            try:
+                if self.browser_session:
+                    # Get playwright instance before closing session
+                    if hasattr(self.browser_session, 'playwright'):
+                        playwright_instance = self.browser_session.playwright
+                    
+                    # Close browser session first
+                    if self.browser_session.initialized:
+                        await self.browser_session.stop()
+                        print("✅ Browser session closed successfully")
+                        
+            except Exception as e:
+                error_msg = str(e).lower()
+                if "browser is closed" in error_msg or "disconnected" in error_msg:
+                    print("ℹ️  Browser session was already closed (expected behavior)")
+                else:
+                    print(f"⚠️  Error during browser session closure: {e}")
+            
+            finally:
+                # Stop playwright instance - critical for preventing hanging processes
+                if playwright_instance:
+                    try:
+                        await playwright_instance.stop()
+                        print("✅ Playwright instance stopped successfully")
+                    except Exception as e:
+                        print(f"⚠️  Error stopping Playwright: {e}")
+                
+                await self._final_cleanup()
+        
+        async def _emergency_cleanup(self):
+            try:
+                if self.browser_session:
+                    if hasattr(self.browser_session, 'playwright'):
+                        await self.browser_session.playwright.stop()
+                    if self.browser_session.initialized:
+                        await self.browser_session.stop()
+            except Exception as e:
+                print(f"⚠️  Emergency cleanup error: {e}")
+            finally:
+                await self._final_cleanup()
+        
+        async def _final_cleanup(self):
+            self.browser_session = None
+    ```
+  </Step>
+
+  <Step title="Create Helper Functions">
+    Add helper functions for creating Browserbase sessions and configuring browser profiles:
+
+    ```python main.py theme={null}
+    async def create_browserbase_session():
+        load_dotenv()
+        
+        bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+        session = bb.sessions.create(project_id=os.environ["BROWSERBASE_PROJECT_ID"])
+        
+        print(f"Session ID: {session.id}")
+        print(f"Debug URL: https://www.browserbase.com/sessions/{session.id}")
+        
+        return session
+
+
+    def create_browser_profile() -> BrowserProfile:
+        return BrowserProfile(
+            keep_alive=False,  # Essential for proper cleanup
+            wait_between_actions=2.0,
+            default_timeout=30000,
+            default_navigation_timeout=30000,
+        )
+
+
+    async def run_automation_task(browser_session: BrowserSession, task: str) -> str:
+        llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
+
+        agent = Agent(
+            task=task,
+            llm=llm,
+            browser_session=browser_session,
+            enable_memory=False,
+            max_failures=5,
+            retry_delay=5,
+            max_actions_per_step=1,
+        )
+        
+        try:
+            print("🚀 Starting agent task...")
+            result = await agent.run(max_steps=20)
+            print("🎉 Task completed successfully!")
+            return str(result)
+            
+        except Exception as e:
+            # Handle expected browser disconnection after successful completion
+            error_msg = str(e).lower()
+            if "browser is closed" in error_msg or "disconnected" in error_msg:
+                print("✅ Task completed - Browser session ended normally")
+                return "Task completed successfully (session ended normally)"
+            else:
+                print(f"❌ Agent execution error: {e}")
+                raise
+                
+        finally:
+            del agent
+    ```
+  </Step>
+
+  <Step title="Create the Main Function">
+    Implement the main execution function with comprehensive error handling:
+
+    ```python main.py theme={null}
+    async def main():
+        try:
+            session = await create_browserbase_session()
+            browser_profile = create_browser_profile()
+            
+            task = ("Go to https://www.macrumors.com/contact.php and fill in the form. "
+                    "Make sure to use the selectors and submit the form")
+            
+            async with ManagedBrowserSession(session.connect_url, browser_profile) as browser_session:
+                result = await run_automation_task(browser_session, task)
+                print(f"Final result: {result}")
+                
+        except KeyboardInterrupt:
+            print("\n⏹️  Process interrupted by user")
+        except Exception as e:
+            print(f"💥 Fatal error: {e}")
+            raise
+        finally:
+            print("🏁 Application shutdown complete")
+
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+  </Step>
+
+  <Step title="Run your script">
+    Run your script:
+
+    ```bash  theme={null}
+    uv run main.py
+    ```
+
+    You should see your Browserbase session start in [Browserbase](https://www.browserbase.com/sessions). The debug URL will be printed to console for real-time session monitoring.
+
+    <Note>
+      **Important Environment Variables**
+
+      Make sure you have these environment variables in your `.env` file:
+
+      * `BROWSERBASE_API_KEY`
+      * `BROWSERBASE_PROJECT_ID`
+      * `OPENAI_API_KEY`
+
+      **Key Features of This Implementation**
+
+      * **Clean Resource Management**: Context manager ensures proper cleanup without complexity
+      * **Essential Error Handling**: Handles browser disconnections and cleanup failures gracefully
+      * **Simplified Approach**: Focused on core functionality without unnecessary overhead
+      * **Production Ready**: Robust enough for real-world applications
+
+      **Browser Use Best Practices Implemented**
+
+      * Set `keep_alive=False` for proper session cleanup
+      * Use reasonable timeouts to prevent hanging processes
+      * Implement proper Playwright instance cleanup
+      * Handle expected browser disconnections after task completion
+      * Use structured error handling with clear logging
+
+      **Common Issues & Fixes**
+
+      * Browser disconnection after successful form submission is expected behavior
+      * The context manager ensures proper cleanup even if errors occur
+      * Playwright instance cleanup prevents hanging processes
+      * Emergency cleanup handles initialization failures gracefully
+      * Reach out to us at [support@browserbase.com](mailto:support@browserbase.com) for additional support
+    </Note>
+  </Step>
+</Steps>
+
+<CardGroup cols={1}>
+  <Card title="Browserbase & Browser Use Sample Code" icon="book" iconType="sharp-solid" href="https://github.com/browserbase/integrations/tree/master/examples/integrations/browser-use">
+    Configure Browserbase to add additional web-browsing capabilities to your
+    Browser Use.
+  </Card>
+</CardGroup>
+
+

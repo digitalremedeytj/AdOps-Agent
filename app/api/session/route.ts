@@ -131,7 +131,20 @@ async function createSession(timezone?: string) {
     apiKey: process.env.BROWSERBASE_API_KEY!,
   });
 
-  const config = await getAll<EdgeConfig>();
+  let config: EdgeConfig = {
+    advancedStealth: undefined,
+    proxies: undefined,
+    regionDistribution: undefined,
+  };
+
+  // Only try to get edge config if EDGE_CONFIG is properly set
+  if (process.env.EDGE_CONFIG && process.env.EDGE_CONFIG !== 'your_edge_config_url') {
+    try {
+      config = await getAll<EdgeConfig>();
+    } catch (error) {
+      console.log("Edge config not available, using defaults:", error);
+    }
+  }
 
   const {
     advancedStealth: advancedStealthConfig,
@@ -139,15 +152,15 @@ async function createSession(timezone?: string) {
     regionDistribution: distributionsConfig,
   } = config;
 
-  const advancedStealth: boolean = advancedStealthConfig ?? true;
-  const proxies: boolean = proxiesConfig ?? true;
+  const advancedStealth: boolean = advancedStealthConfig ?? false;
+  const proxies: boolean = proxiesConfig ?? false;
 
   // Build browserSettings conditionally
   const browserSettings: Browserbase.Sessions.SessionCreateParams.BrowserSettings =
     {
       viewport: {
-        width: 2560,
-        height: 1440,
+        width: 1280,
+        height: 720,
       },
       blockAds: true,
       advancedStealth,
@@ -208,6 +221,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const timezone = body.timezone as string;
+    
+    console.log("Creating session with timezone:", timezone);
+    console.log("BROWSERBASE_API_KEY exists:", !!process.env.BROWSERBASE_API_KEY);
+    console.log("BROWSERBASE_PROJECT_ID exists:", !!process.env.BROWSERBASE_PROJECT_ID);
+    
     const { session } = await createSession(timezone);
     const liveUrl = await getDebugUrl(session.id);
 
@@ -218,8 +236,9 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Error creating session:", error);
+    console.error("Error details:", error instanceof Error ? error.message : String(error));
     return NextResponse.json(
-      { success: false, error: "Failed to create session" },
+      { success: false, error: "Failed to create session", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
