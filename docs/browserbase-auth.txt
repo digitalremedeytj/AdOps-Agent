@@ -1,0 +1,537 @@
+# Handling Authentication
+
+> Managing 2FA and other authentication flows.
+
+Many websites require authentication before allowing access to protected content or actions. Browserbase provides flexible methods for handling authentication in automated sessions, ensuring seamless logins while maintaining security and efficiency.
+
+**Why Authentication Matters in Automation**
+
+* Ensures access to restricted content without manual intervention.
+* Reduces session expiration issues by persisting login states.
+* Prevents bot detection and account lockouts with stealth techniques.
+
+## Strategies for Handling Authentication
+
+Handling authentication in automation requires **maintaining session state, avoiding bot detection, and resolving challenges like CAPTCHAs or multi-factor authentication (MFA)**. Browserbase provides several strategies to help you authenticate reliably while ensuring security and efficiency.
+
+1. Create a session with context, proxies, and fingerprinting.
+2. Use the Session Live View to log into the website.
+3. Use the context ID to persist the authentication state across future sessions.
+
+### Create a Session with Contexts, Proxies, and Fingerprinting
+
+Ensure seamless authentication by persisting login sessions, avoiding detection, and preventing IP-based blocking.
+
+* [Apply Contexts](/features/contexts) → Store cookies, session tokens, and local storage to prevent repeated logins. Log in once, then reuse the saved authentication state.
+* [Enable Stealth Mode](/features/stealth-mode) → Adjust browser, OS, and screen settings to blend in with real users and bypass detection.
+* [Use Proxies](/features/proxies) → Rotate residential proxies and match IP locations to prevent tracking and login restrictions.
+
+By combining contexts, stealth mode, and proxies, you can create secure, stable, and automated authentication workflows.
+
+<Tabs>
+  <Tab title="Node.js">
+    <CodeGroup>
+      ```typescript SDK theme={null}
+      import { Browserbase } from "@browserbasehq/sdk";
+
+      async function createAuthSession(contextId: string) {
+        const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+
+        const session = await bb.sessions.create({
+          projectId: process.env.BROWSERBASE_PROJECT_ID!,
+          browserSettings: {
+            context: {
+              id: contextId,
+              persist: true
+            }
+          },
+          proxies: [{
+            type: "browserbase",
+            geolocation: {
+              city: "New York",
+              state: "NY",
+              country: "US"
+            }
+          }]
+        });
+
+        console.log("Session URL: https://browserbase.com/sessions/" + session.id);
+        return session;
+      }
+
+      // Use the context ID from your saved context
+      const contextId = "<context-id>";
+      const session = await createAuthSession(contextId);
+      console.log("Session URL: https://browserbase.com/sessions/" + session.id);
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Python">
+    <CodeGroup>
+      ```python SDK theme={null}
+      from browserbase import Browserbase
+      import os
+
+      bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+
+      def create_auth_session(context_id: str):
+        session = bb.sessions.create(
+          project_id=os.environ["BROWSERBASE_PROJECT_ID"],
+          browser_settings={
+            "context": {
+              "id": context_id,
+              "persist": True
+            }
+          },
+          proxies=[{
+            "type": "browserbase",
+            "geolocation": {
+              "city": "New York",
+              "state": "NY",
+              "country": "US"
+            }
+          }]
+        )
+        print("Session URL: https://browserbase.com/sessions/" + session.id)
+        return session
+
+      # Use the context ID from your saved context
+      context_id = "<context-id>"
+      session = create_auth_session(context_id)
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+### Use the Session Live View to login
+
+For authentication workflows, the best practice is to **log in manually once using Session Live View**, then **persist the authentication state across future sessions using contexts**. This approach ensures secure, repeatable logins without needing manual input every time.
+
+1. Start a new session and retrieve the **Session Live View URL**.
+2. Open the Live View in your browser to **interact with the session in real time**.
+3. Once logged in, the session's authentication data (cookies, session tokens) is stored.
+4. Save the session context id so future sessions can **reuse the authentication state without logging in again**.
+
+<Card title="Taking a Session's Remote Control with Session Live View" href="/features/session-live-view">
+  Incorporate a human in the loop to complete the authentication process.
+</Card>
+
+### Use the context ID to persist the authentication state across future sessions
+
+After logging in once, you can reuse the authentication state by storing it in a context. This allows future sessions to bypass the login process, maintaining access to authenticated pages without needing manual input.
+
+Now, any session using this context.id will start already logged in, eliminating the need to authenticate again. By persisting authentication with contexts, you can ensure seamless automation, reduce login failures, and improve session continuity.
+
+# 2FA Challenges
+
+Two-step verification (via authenticator apps or SMS) or magic links usually require human intervention in the loop. There are 2 main strategies to manage 2FA:
+
+1. Disable 2FA or create an app password
+2. Enable Remote Control of your Session
+
+### Disable 2FA or create an app password
+
+For an internal tool, try to turn off the
+[two-step verification](https://support.google.com/accounts/answer/1064203?hl=en\&co=GENIE.Platform%3DDesktop).
+
+For an authentication flow requiring some level of security,
+[try to create an app password](https://support.google.com/accounts/answer/185833?hl=en).
+
+### Enable Remote Control of your Session
+
+If a two-step verification mechanism cannot be bypassed or disabled, consider handing back control to the end user by leveraging the Session Live URLs.
+
+<Card title="Taking a Session's Remote Control with Session Live View" href="/features/session-live-view">
+  Let your end users complete the two-step verification process as part of your
+  automation.
+</Card>
+
+## Accessing an authentication flow with Stealth Mode
+
+Many authentication flows implement mechanisms to prevent web automation:
+
+* IP address restrictions
+* User agent filtering
+* Captchas
+* Rate limiting
+
+When running your browser session, dealing with these impediments may require setting up IP
+rotations with proxies along with captcha solving and fingerprint generators.
+
+By automating with Browserbase, you get opt-in [proxies](/features/proxies#use-built-in-proxies), automatic, fully [configurable
+fingerprinting](/features/stealth-mode#fingerprint), and captcha solving--without any coding:
+
+## Speed up your automation by reusing cookies
+
+Some websites or web apps rely on cookies-based Sessions, which can be easily retrieved and reused to speed up your automation.
+
+The code examples below showcase how to retrieve and set cookies to avoid having your automation go through the authentication flow at each run:
+
+<Tabs>
+  <Tab title="Node.js">
+    ```typescript Playwright theme={null}
+    import Browserbase from "@browserbasehq/sdk";
+    import { chromium } from "playwright-core";
+    import storage from "./storage.js";
+
+    async function authenticate(page, context) {
+      const session = await storage.getSession();
+      if (session) {
+        await context.addCookies([session]);
+
+        // try to access a protected page
+        await page.goto("https://www.browserbase.com/overview");
+
+        if (page.url === "https://www.browserbase.com/overview") {
+          // no redirect -> we are authenticated, let's skip the authentication flow
+          return;
+        }
+      }
+
+      await page.goto("https://www.browserbase.com/sign-in");
+
+      // ... sign-in ...
+
+      // retrieve User Session Cookie
+      const cookies = await context.cookies();
+      const sessionCookie = cookies.find((c) => c.name === "session_id");
+      await storage.storeSession(sessionCookie);
+    }
+
+    (async () => {
+      const bb = new Browserbase({
+        apiKey: process.env.BROWSERBASE_API_KEY
+      });
+      const session = await bb.sessions.create({
+          projectId: process.env.BROWSERBASE_PROJECT_ID,
+          proxies: true
+      });
+      const browser = await chromium.connectOverCDP(session.connectUrl);
+
+      // Getting the default context to ensure the sessions are recorded.
+      const defaultContext = browser.contexts()[0];
+      const page = defaultContext.pages()[0];
+
+      await authenticate(page, defaultContext);
+
+      // ... interact with page ...
+
+      await page.close();
+      await browser.close();
+    })().catch((error) => console.error(error.message));
+    ```
+  </Tab>
+
+  <Tab title="Python">
+    ```py Playwright theme={null}
+    # The first time this file is run, the authentication cookies will be stored
+    # to a file. Subsequent runs will load those cookies from the file.
+    import json
+    import os
+    from browserbase import Browserbase
+    from playwright.sync_api import sync_playwright, Page
+
+    API_KEY = os.environ["BROWSERBASE_API_KEY"]
+
+
+    SITE_URL = "https://practice.expandtesting.com"
+    SITE_LOGIN_URL = f"{SITE_URL}/login"
+    SITE_PROTECTED_URL = f"{SITE_URL}/secure"
+
+    # Credentials to use for testing the login flow.
+    # For testing only! Don't store secrets in code.
+    SITE_USERNAME = "practice"
+    SITE_PASSWORD = "SuperSecretPassword!"
+
+    # This would typically be stored in some other durable storage or even kept in
+    # memory. Here, we're just going to serialize them to disk using json dump/load.
+    # Ensure these are well secured as anyone with this information can log in!
+    COOKIE_FILE = "test-cookies.json"
+
+
+    def store_cookies(browser_tab: Page):
+        # Retrieve all the cookies for this URL
+        all_cookies = browser_tab.context.cookies(SITE_URL)
+
+        # You might want to put these in some durable storage, but for now
+        # just keep them in a simple file as JSON.
+        with open(COOKIE_FILE, "w") as cookie_file:
+            json.dump(all_cookies, cookie_file, indent=4)
+
+        print(f"Saved {len(all_cookies)} cookie(s) from the browser context")
+
+
+    def restore_cookies(browser_tab: Page):
+        # Return all cookies to the browser context
+
+        try:
+            with open(COOKIE_FILE) as cookie_file:
+                cookies = json.load(cookie_file)
+        except FileNotFoundError:
+            # No cookies to restore
+            return
+
+        browser_tab.context.add_cookies(cookies)
+        print(f"Restored {len(cookies)} cookie(s) to the browser context")
+
+
+    def authenticate(browser_tab: Page):
+        # Navigate to the sign-in page, enter the site credentials and sign in
+        print("Attempting to log in")
+        browser_tab.goto(SITE_LOGIN_URL)
+
+        browser_tab.get_by_role("textbox", name="username").fill(SITE_USERNAME)
+        browser_tab.get_by_role("textbox", name="password").fill(SITE_PASSWORD)
+        browser_tab.get_by_role("button", name="Login").click()
+
+        # Store the site cookies
+        store_cookies(browser_tab)
+
+
+    def run(browser_tab: Page):
+        # Load up any stored cookies
+        restore_cookies(browser_tab)
+
+        # Instruct the browser to go to a protected page
+        browser_tab.goto(SITE_PROTECTED_URL)
+
+        if browser_tab.url != SITE_PROTECTED_URL:
+            # Redirected, almost certainly need to log in.
+            authenticate(browser_tab)
+
+            # Try again
+            browser_tab.goto(SITE_PROTECTED_URL)
+
+        # Print out a bit of info about the page it landed on
+        print(f"{browser_tab.url=} | {browser_tab.title()=}")
+
+        ...
+
+
+    with sync_playwright() as playwright:
+        bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+        # A session is created on the fly
+        session = bb.sessions.create(
+            project_id=os.environ["BROWSERBASE_PROJECT_ID"],
+            proxies=True
+        )
+        browser = playwright.chromium.connect_over_cdp(session.connectUrl)
+
+        # Print a bit of info about the browser we've connected to
+        print(
+            "Connected to Browserbase.",
+            f"{browser.browser_type.name} version {browser.version}",
+        )
+
+        context = browser.contexts[0]
+        browser_tab = context.pages[0]
+
+        try:
+            # Perform our browser commands
+            run(browser_tab)
+
+        finally:
+            # Clean up
+            browser_tab.close()
+            browser.close()
+
+    ```
+  </Tab>
+</Tabs>
+
+# Handling Passkeys
+
+[Passkeys](https://www.w3.org/TR/webauthn-3/) are a modern authentication method that can present challenges for automation since they typically require user interaction. When automating sites that use passkeys, you'll often want to disable or bypass them since the required user interactions aren't supported in automated sessions.
+
+### Disable Passkeys in Your Session
+
+To prevent passkey prompts from appearing and potentially blocking your automation, you can disable them using the Chrome DevTools Protocol (CDP). Here's how to do it:
+
+<Tabs>
+  <Tab title="Node.js">
+    ```typescript  theme={null}
+    import { chromium } from "playwright-core";
+    import { Browserbase } from "@browserbasehq/sdk";
+
+    async function createSessionWithoutPasskeys() {
+      const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY! });
+      const session = await bb.sessions.create({
+        projectId: process.env.BROWSERBASE_PROJECT_ID!
+      });
+      console.log(`Session created, id: ${session.id}`);
+
+      // Connect to the remote browser
+      const browser = await chromium.connectOverCDP(session.connectUrl);
+      const defaultContext = browser.contexts()[0];
+      const page = defaultContext.pages()[0];
+
+      // Create a CDP session and configure the virtual authenticator
+      const client = await page.context().newCDPSession(page);
+      await client.send('WebAuthn.enable');
+      await client.send('WebAuthn.addVirtualAuthenticator', {
+        options: {
+          protocol: 'ctap2',
+          transport: 'internal',
+          hasResidentKey: true,
+          hasUserVerification: true,
+          isUserVerified: true,
+          automaticPresenceSimulation: true,
+        },
+      });
+
+      return page;
+    }
+    ```
+  </Tab>
+
+  <Tab title="Python">
+    ```python  theme={null}
+    from browserbase import Browserbase
+    from playwright.sync_api import sync_playwright
+    import os
+
+    def create_session_without_passkeys():
+        bb = Browserbase(api_key=os.environ["BROWSERBASE_API_KEY"])
+        session = bb.sessions.create(
+            project_id=os.environ["BROWSERBASE_PROJECT_ID"]
+        )
+        print(f"Session created, id: {session.id}")
+
+        # Connect to the remote browser
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.connect_over_cdp(session.connect_url)
+            context = browser.contexts[0]
+            page = context.pages[0]
+
+            # Create a CDP session and configure the virtual authenticator
+            client = page.context.new_cdp_session(page)
+            client.send("WebAuthn.enable")
+            client.send("WebAuthn.addVirtualAuthenticator", {
+                "options": {
+                    "protocol": "ctap2",
+                    "transport": "internal",
+                    "hasResidentKey": True,
+                    "hasUserVerification": True,
+                    "isUserVerified": True,
+                    "automaticPresenceSimulation": True,
+                }
+            })
+
+            return page
+    ```
+  </Tab>
+</Tabs>
+
+This code:
+
+1. Creates a new Browserbase session
+2. Connects to the browser using CDP
+3. Enables the WebAuthn API
+4. Adds a virtual authenticator that prevents real passkey prompts
+
+By setting up this virtual authenticator, you prevent the browser from prompting for actual passkey authentication, allowing your automation to proceed with other authentication methods like username/password.
+
+### Alternative Authentication Methods
+
+When passkeys are enabled on a site, there's usually an alternative authentication method available (like username/password). After disabling passkeys, look for these alternative methods:
+
+* "Sign in with password" links
+* "Other sign-in options" buttons
+* Username/password form toggles
+
+
+# Single Sign-On (SSO) Setup
+
+> Learn how to enable SAML 2.0-based Single Sign-On for your Browserbase organization
+
+# Single Sign-On (SSO) with SAML
+
+Browserbase supports **SAML 2.0-based Single Sign-On (SSO)** so your team can log in with your corporate identity provider (IdP).\
+This guide walks you through the setup process.
+
+<Info>
+  SSO is available only to Enterprise Plans. Please [get in touch](https://www.browserbase.com/contact) with our team to enable SSO on your Browserbase account.
+</Info>
+
+***
+
+## Supported Identity Providers
+
+Any **SAML 2.0-compliant IdP** is supported, including:
+
+* Okta Workforce
+* Microsoft Entra ID (formerly Azure AD)
+* Google Workspace (SAML)
+* Custom SAML providers
+
+***
+
+## How Setup Works
+
+SSO setup involves coordination between your IT team and Browserbase support. Here's the process:
+
+**Example:** Acme Corp wants to enable Okta SSO for their Browserbase organization.
+
+### Step 1: Your IT Team Shares IdP Configuration
+
+Your IT administrator sends the following details from your identity provider to [support@browserbase.com](mailto:support@browserbase.com):
+
+* **Sign-on URL (SSO URL)** - Where Browserbase redirects users for authentication
+* **Entity ID / Issuer** - Your IdP's unique identifier
+* **X.509 Signing Certificate** - Used to verify SAML assertions
+
+### Step 2: Browserbase Provides Service Provider Details
+
+The Browserbase team responds with configuration values your IT team needs:
+
+* **Assertion Consumer Service (ACS) URL** - Where your IdP sends authentication responses
+* **Entity ID (Audience URI)** - Browserbase's unique identifier
+* **Metadata URL** - Complete SAML configuration (preferred method)
+
+### Step 3: Your IT Team Configures the SAML Application
+
+Your administrator creates a new SAML application in your IdP (e.g., Okta, Azure AD) using the Browserbase SP details.
+
+### Step 4: Joint Testing
+
+Both teams coordinate to test the login flow and verify that user attributes are mapped correctly.
+
+### Step 5: Browserbase Enables SSO
+
+Once testing is successful, the Browserbase team enables SSO for your organization.
+
+***
+
+## Required Attributes
+
+Browserbase requires the following attributes in the SAML assertion:
+
+* **User ID** – A stable, unique identifier for the user (e.g., Okta `user.id`)
+* **Email Address** – The user’s email (e.g., Okta `user.email`)
+* **First Name** – The user’s given name (e.g., Okta `user.firstName`)
+* **Last Name** – The user’s surname (e.g., Okta `user.lastName`)
+
+Your IdP may expose these as `NameID`, attribute statements, or claims. Please ensure the values are passed consistently to Browserbase.
+
+***
+
+## Testing
+
+* **SP-initiated login** (recommended)\
+  Start from the Browserbase login page → redirected to your IdP → redirected back after successful authentication.
+
+***
+
+## Next Steps
+
+1. Collect your IdP configuration values.
+2. Share them with Browserbase at [support@browserbase.com](mailto:support@browserbase.com).
+3. Our team will reply with the Browserbase SP details.
+4. Together we'll test and finalize the integration.
+
+***
+
+<Check>
+  Once complete, your users can securely log in to Browserbase with SSO.
+</Check>

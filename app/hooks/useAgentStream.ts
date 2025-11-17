@@ -440,6 +440,20 @@ export function useAgentStream({
       es.addEventListener("error", (e) => {
         try {
           const payload = JSON.parse((e as MessageEvent).data);
+          
+          // Check if this is a Yahoo DSP authentication error
+          if (payload.requiresAuth && payload.authUrl) {
+            setState((prev) => ({
+              ...prev,
+              error: payload.message,
+              isFinished: true,
+            }));
+            
+            // Redirect to Yahoo DSP auth page
+            window.location.href = payload.authUrl;
+            return;
+          }
+          
           const errorMessage =
             payload.message || "Connection lost. Please try again.";
           setState((prev) => ({
@@ -462,6 +476,39 @@ export function useAgentStream({
         es.close();
         eventSourceRef.current = null;
       });
+
+      // Handle HTTP errors (like 401 for auth required)
+      es.onerror = (event) => {
+        console.log('[useAgentStream] EventSource error:', event);
+        
+        // Check if the error is due to a 401 response
+        fetch(`/api/agent/stream?${params.toString()}`, { method: 'HEAD' })
+          .then(response => {
+            if (response.status === 401) {
+              return response.json().then(data => {
+                if (data.requiresAuth && data.authUrl) {
+                  setState((prev) => ({
+                    ...prev,
+                    error: data.message,
+                    isFinished: true,
+                  }));
+                  
+                  // Redirect to Yahoo DSP auth page
+                  window.location.href = data.authUrl;
+                  return;
+                }
+              });
+            }
+          })
+          .catch(() => {
+            // Fallback error handling
+            setState((prev) => ({
+              ...prev,
+              error: "Connection lost. Please try again.",
+              isFinished: true,
+            }));
+          });
+      };
 
       // Store es in a variable for cleanup
       return () => {

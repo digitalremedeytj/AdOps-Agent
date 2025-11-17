@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AnimatedButton from "./ui/AnimatedButton";
+import YahooDSPAuthModal from "./YahooDSPAuthModal";
+import { useYahooDSPAuth } from "@/app/hooks/useYahooDSPAuth";
 import { CampaignQAFormProps } from "@/app/types/Campaign";
 
 export default function CampaignQAForm({ onSubmit }: CampaignQAFormProps) {
   const [campaignUrl, setCampaignUrl] = useState("");
   const [qaUrl, setQaUrl] = useState("");
+  const [customInstructions, setCustomInstructions] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Yahoo DSP authentication
+  const { 
+    requiresAuth, 
+    triggerAuth, 
+    showAuthModal, 
+    authModalUrl, 
+    closeAuthModal, 
+    onAuthComplete
+  } = useYahooDSPAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,11 +30,33 @@ export default function CampaignQAForm({ onSubmit }: CampaignQAFormProps) {
       return;
     }
 
+    // Check if QA URL requires Yahoo DSP authentication
+    if (requiresAuth(qaUrl.trim())) {
+      console.log('Yahoo DSP authentication required for QA URL:', qaUrl.trim());
+      triggerAuth(qaUrl.trim(), 'qa_form');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await onSubmit(campaignUrl.trim(), qaUrl.trim());
+      await onSubmit(campaignUrl.trim(), qaUrl.trim(), customInstructions.trim() || undefined);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handle authentication completion
+  const handleAuthComplete = async (sessionId: string, sessionUrl: string, targetUrl?: string) => {
+    onAuthComplete(sessionId, sessionUrl, targetUrl);
+    
+    // After authentication, proceed with the original form submission
+    if (campaignUrl.trim() && qaUrl.trim()) {
+      setIsLoading(true);
+      try {
+        await onSubmit(campaignUrl.trim(), qaUrl.trim(), customInstructions.trim() || undefined);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -114,6 +149,33 @@ export default function CampaignQAForm({ onSubmit }: CampaignQAFormProps) {
               </p>
             )}
           </div>
+
+          <div className="flex flex-col gap-2">
+            <label 
+              htmlFor="customInstructions" 
+              className="text-sm font-medium text-gray-700 font-ppsupply"
+            >
+              Custom Instructions (Optional)
+            </label>
+            <textarea
+              id="customInstructions"
+              value={customInstructions}
+              onChange={(e) => setCustomInstructions(e.target.value)}
+              placeholder="Enter any additional instructions for the AI (optional)..."
+              rows={3}
+              className="w-full px-4 py-3 border border-[#CAC8C7] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 font-ppsupply text-sm md:text-base transition-all duration-300 focus:backdrop-blur-sm focus:bg-opacity-95 focus:bg-white resize-vertical"
+              style={{
+                '--tw-ring-color': 'var(--primary-accent)',
+              } as React.CSSProperties}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--primary-accent)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#CAC8C7';
+              }}
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         <div className="flex justify-center">
@@ -151,6 +213,14 @@ export default function CampaignQAForm({ onSubmit }: CampaignQAFormProps) {
       >
         <p>The AI will extract campaign information</p>
       </motion.div>
+
+      {/* Yahoo DSP Authentication Modal */}
+      <YahooDSPAuthModal
+        isOpen={showAuthModal}
+        onClose={closeAuthModal}
+        targetUrl={authModalUrl || undefined}
+        onAuthComplete={handleAuthComplete}
+      />
     </motion.div>
   );
 }

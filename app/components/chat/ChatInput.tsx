@@ -1,5 +1,6 @@
-import { RefObject } from "react";
+import { RefObject, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useYahooDSPAuth } from "@/app/hooks/useYahooDSPAuth";
 
 interface ChatInputProps {
   isWaitingForInput: boolean;
@@ -18,6 +19,43 @@ export default function ChatInput({
   onSubmit,
   inputRef,
 }: ChatInputProps) {
+  const { extractUrls, requiresAuth, triggerAuth } = useYahooDSPAuth();
+
+  // Check for Yahoo DSP URLs when user input changes
+  useEffect(() => {
+    if (userInput.trim()) {
+      const yahooDSPUrls = extractUrls(userInput);
+      if (yahooDSPUrls.length > 0) {
+        console.log('Detected Yahoo DSP URLs:', yahooDSPUrls);
+      }
+    }
+  }, [userInput, extractUrls]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (["quit", "exit", "bye"].includes(userInput.toLowerCase())) {
+      // This should be handled by the parent component
+      return;
+    }
+
+    // Check for Yahoo DSP URLs that require authentication
+    const yahooDSPUrls = extractUrls(userInput);
+    const unauthenticatedUrls = yahooDSPUrls.filter(urlInfo => 
+      requiresAuth(urlInfo.originalUrl)
+    );
+
+    if (unauthenticatedUrls.length > 0) {
+      // Trigger authentication for the first URL that needs it
+      const firstUrl = unauthenticatedUrls[0];
+      triggerAuth(firstUrl.originalUrl, 'chat_input');
+      return;
+    }
+
+    // Proceed with normal submission
+    await onSubmit(userInput);
+  };
+
   if (!isWaitingForInput || isAgentFinished) {
     return null;
   }
@@ -34,14 +72,7 @@ export default function ChatInput({
           console.log("Animation complete, focusing input");
         }
       }}
-      onSubmit={async (e) => {
-        e.preventDefault();
-        if (["quit", "exit", "bye"].includes(userInput.toLowerCase())) {
-          // This should be handled by the parent component
-          return;
-        }
-        await onSubmit(userInput);
-      }}
+      onSubmit={handleSubmit}
       className="mt-4 flex gap-2 w-full"
     >
       <input

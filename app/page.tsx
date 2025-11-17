@@ -10,6 +10,8 @@ import NavBar from "./components/NavBar";
 import CampaignQAForm from "./components/CampaignQAForm";
 import CampaignElementSelector from "./components/CampaignElementSelector";
 import QAResultsDisplay from "./components/QAResultsDisplay";
+import YahooDSPAuthModal from "./components/YahooDSPAuthModal";
+import { useYahooDSPAuth } from "./hooks/useYahooDSPAuth";
 import { CampaignElement, QAResult } from "./types/Campaign";
 import { Code, MessageCircle, Search, Grid3x3 } from "lucide-react";
 
@@ -62,9 +64,22 @@ export default function Home() {
   const [qaSummary, setQaSummary] = useState<any>(null);
   const [qaOverallStatus, setQaOverallStatus] = useState<'PASS' | 'FAIL'>('PASS');
 
-  const handleCampaignSubmit = useCallback(async (campaignUrl: string, qaUrl: string) => {
+  // Yahoo DSP authentication
+  const { 
+    showAuthModal, 
+    authModalUrl, 
+    closeAuthModal, 
+    onAuthComplete,
+    requiresAuth,
+    extractUrls
+  } = useYahooDSPAuth();
+
+  const [customInstructions, setCustomInstructions] = useState<string | undefined>(undefined);
+
+  const handleCampaignSubmit = useCallback(async (campaignUrl: string, qaUrl: string, customInstructions?: string) => {
     setIsLoading(true);
     setQaUrls({ campaignUrl, qaUrl });
+    setCustomInstructions(customInstructions);
     
     try {
       const response = await fetch('/api/campaign/parse', {
@@ -113,7 +128,7 @@ export default function Home() {
    Expected Value: "${el.expectedValue}"`)
       .join('\n\n');
     
-    const qaMessage = `Navigate to ${qaUrls.qaUrl} and validate the following ${selectedElements.length} campaign elements:
+    let qaMessage = `Navigate to ${qaUrls.qaUrl} and validate the following ${selectedElements.length} campaign elements:
 
 ${selectedElementsText}
 
@@ -158,6 +173,11 @@ IMPORTANT:
 - Provide clean actualValue without "Expected:" text
 
 Work systematically through each element. Be thorough but efficient.`;
+
+    // Append custom instructions if provided
+    if (customInstructions) {
+      qaMessage += `\n\nAdditional Instructions: ${customInstructions}`;
+    }
 
     setInitialMessage(qaMessage);
     setCurrentView('chat');
@@ -204,59 +224,77 @@ Work systematically through each element. Be thorough but efficient.`;
   }, []);
 
   return (
-    <AnimatePresence>
-      {currentView === 'chat' ? (
-        <QAChatFeed
-          key={`qa-chat-feed-${initialMessage}`}
-          initialMessage={initialMessage}
-          selectedElements={selectedElements}
-          onClose={handleBackToForm}
-          onQAComplete={handleQAComplete}
-        />
-      ) : currentView === 'results' ? (
-        <div className="min-h-screen bg-gray-50">
-          <NavBar />
-          <QAResultsDisplay
-            results={qaResults}
-            summary={qaSummary}
-            overallStatus={qaOverallStatus}
-            onBack={handleBackToForm}
+    <>
+      <AnimatePresence>
+        {currentView === 'chat' ? (
+          <QAChatFeed
+            key={`qa-chat-feed-${initialMessage}`}
+            initialMessage={initialMessage}
+            selectedElements={selectedElements}
+            onClose={handleBackToForm}
+            onQAComplete={handleQAComplete}
           />
-        </div>
-      ) : (
-        <div className="min-h-screen bg-gray-100 flex flex-col relative">
-          {/* Top Navigation */}
-          <NavBar />
+        ) : currentView === 'results' ? (
+          <div className="min-h-screen bg-gray-50">
+            <NavBar />
+            <QAResultsDisplay
+              results={qaResults}
+              summary={qaSummary}
+              overallStatus={qaOverallStatus}
+              onBack={handleBackToForm}
+            />
+          </div>
+        ) : (
+          <div className="min-h-screen bg-gray-100 flex flex-col relative">
+            {/* Top Navigation */}
+            <NavBar />
 
-          {/* Main Content */}
-          <main className="flex-1 flex flex-col items-center pt-12 md:pt-16 lg:pt-20 pb-16 md:pb-24 lg:pb-32 px-6 z-10">
-            <div className="w-full max-w-[640px] md:max-w-[800px] lg:max-w-[960px] bg-white border border-[#CAC8C7] shadow-sm z-10" style={{ borderRadius: '12px' }}>
-              <div className="p-8 md:p-10 lg:p-12 flex flex-col items-center gap-8 md:gap-10">
-                <div className="flex flex-col items-center gap-3 md:gap-5">
-                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-ppneue text-gray-900 text-center">
-                    Campaign QA Tool
-                  </h1>
-                  <p className="text-base md:text-lg font-ppsupply text-gray-500 text-center">
-                    AI-powered campaign quality assurance
-                  </p>
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col items-center pt-12 md:pt-16 lg:pt-20 pb-16 md:pb-24 lg:pb-32 px-6 z-10">
+              <div className="w-full max-w-[640px] md:max-w-[800px] lg:max-w-[960px] bg-white border border-[#CAC8C7] shadow-sm z-10" style={{ borderRadius: '12px' }}>
+                <div className="p-8 md:p-10 lg:p-12 flex flex-col items-center gap-8 md:gap-10">
+                  <div className="flex flex-col items-center gap-3 md:gap-5">
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-ppneue text-gray-900 text-center">
+                      Campaign QA Tool
+                    </h1>
+                    <p className="text-base md:text-lg font-ppsupply text-gray-500 text-center">
+                      AI-powered campaign quality assurance
+                    </p>
+                  </div>
+
+                  {currentView === 'form' && (
+                    <CampaignQAForm onSubmit={handleCampaignSubmit} />
+                  )}
+
+                  {currentView === 'selector' && (
+                    <CampaignElementSelector
+                      elements={campaignElements}
+                      onSelectionChange={handleElementSelectionChange}
+                      onStartQA={handleStartQA}
+                    />
+                  )}
                 </div>
-
-                {currentView === 'form' && (
-                  <CampaignQAForm onSubmit={handleCampaignSubmit} />
-                )}
-
-                {currentView === 'selector' && (
-                  <CampaignElementSelector
-                    elements={campaignElements}
-                    onSelectionChange={handleElementSelectionChange}
-                    onStartQA={handleStartQA}
-                  />
-                )}
               </div>
-            </div>
-          </main>
-        </div>
-      )}
-    </AnimatePresence>
+            </main>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Yahoo DSP Authentication Modal */}
+      <YahooDSPAuthModal
+        isOpen={showAuthModal}
+        onClose={closeAuthModal}
+        targetUrl={authModalUrl || undefined}
+        onAuthComplete={(sessionId, sessionUrl, targetUrl) => {
+          onAuthComplete(sessionId, sessionUrl, targetUrl);
+          
+          // If we have a target URL, we could trigger navigation or other actions here
+          if (targetUrl) {
+            console.log('Authentication completed for target URL:', targetUrl);
+            // You could trigger the QA process here if the target URL was from a QA form
+          }
+        }}
+      />
+    </>
   );
 }

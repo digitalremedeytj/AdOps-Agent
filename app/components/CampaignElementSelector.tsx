@@ -11,6 +11,11 @@ export default function CampaignElementSelector({
   onStartQA 
 }: CampaignElementSelectorProps) {
   const [localElements, setLocalElements] = useState<CampaignElement[]>(elements);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newElement, setNewElement] = useState({
+    label: '',
+    expectedValue: ''
+  });
 
   const handleToggle = (id: string) => {
     const updated = localElements.map(element => 
@@ -32,27 +37,40 @@ export default function CampaignElementSelector({
     onSelectionChange(updated);
   };
 
+  const handleAddElement = () => {
+    if (!newElement.label.trim() || !newElement.expectedValue.trim()) return;
+
+    const elementToAdd: CampaignElement = {
+      id: `custom-element-${Date.now()}`,
+      label: newElement.label.trim(),
+      expectedValue: newElement.expectedValue.trim(),
+      selected: true
+    };
+
+    const updated = [...localElements, elementToAdd];
+    setLocalElements(updated);
+    onSelectionChange(updated);
+
+    // Reset form
+    setNewElement({
+      label: '',
+      expectedValue: ''
+    });
+    setShowAddForm(false);
+  };
+
+  const handleCancelAdd = () => {
+    setNewElement({
+      label: '',
+      expectedValue: ''
+    });
+    setShowAddForm(false);
+  };
+
   const selectedCount = localElements.filter(el => el.selected).length;
   const canStartQA = selectedCount > 0;
 
-  // Group elements by category
-  const groupedElements = localElements.reduce((acc, element) => {
-    if (!acc[element.category]) {
-      acc[element.category] = [];
-    }
-    acc[element.category].push(element);
-    return acc;
-  }, {} as Record<string, CampaignElement[]>);
-
-  const categoryOrder = ['budget', 'targeting', 'creative', 'dates', 'placement', 'other'];
-  const categoryLabels = {
-    budget: 'Budget & Bidding',
-    targeting: 'Targeting',
-    creative: 'Creative',
-    dates: 'Dates & Scheduling',
-    placement: 'Placement',
-    other: 'Other'
-  };
+  // No grouping - display elements in order detected
 
   return (
     <motion.div
@@ -109,68 +127,169 @@ export default function CampaignElementSelector({
           >
             Select None
           </button>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="px-3 py-1.5 text-sm border border-[#CAC8C7] transition-colors font-ppsupply"
+            style={{
+              '--hover-color': 'var(--primary-accent)',
+              borderRadius: '8px',
+            } as React.CSSProperties}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--primary-accent)';
+              e.currentTarget.style.color = 'var(--primary-accent)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#CAC8C7';
+              e.currentTarget.style.color = 'inherit';
+            }}
+          >
+            + Add Element
+          </button>
           <div className="ml-auto text-sm text-gray-500 font-ppsupply flex items-center">
             {selectedCount} of {localElements.length} selected
           </div>
         </div>
       </div>
 
-      {/* Elements List */}
-      <div className="p-6 max-h-96 overflow-y-auto">
-        {categoryOrder.map(category => {
-          const categoryElements = groupedElements[category];
-          if (!categoryElements || categoryElements.length === 0) return null;
-
-          return (
-            <div key={category} className="mb-6 last:mb-0">
-              <h3 className="text-sm font-medium text-gray-700 font-ppsupply mb-3 uppercase tracking-wide">
-                {categoryLabels[category as keyof typeof categoryLabels]}
-              </h3>
-              <div className="space-y-3">
-                {categoryElements.map((element) => (
-                  <motion.div
-                    key={element.id}
-                    className="flex items-start gap-3 p-3 border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                    onClick={() => handleToggle(element.id)}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--primary-accent)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = '#e5e7eb';
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={element.selected}
-                      onChange={() => handleToggle(element.id)}
-                      className="mt-0.5 h-4 w-4 border-gray-300 rounded"
-                      style={{
-                        accentColor: 'var(--primary-accent)',
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 font-ppsupply">
-                            {element.label}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-600 font-ppsupply break-all">
-                            {element.expectedValue}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+      {/* Add Element Form */}
+      {showAddForm && (
+        <div className="border-b border-[#CAC8C7] p-6 bg-gray-50">
+          <h3 className="text-lg font-ppneue text-gray-900 mb-4">Add Custom Element</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 font-ppsupply mb-2">
+                  Element Label
+                </label>
+                <input
+                  type="text"
+                  value={newElement.label}
+                  onChange={(e) => setNewElement({ ...newElement, label: e.target.value })}
+                  placeholder="e.g., Additional Cost Type"
+                  className="w-full px-3 py-2 border border-[#CAC8C7] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 font-ppsupply text-sm"
+                  style={{
+                    '--tw-ring-color': 'var(--primary-accent)',
+                    borderRadius: '8px',
+                  } as React.CSSProperties}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'var(--primary-accent)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#CAC8C7';
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 font-ppsupply mb-2">
+                  Expected Value
+                </label>
+                <input
+                  type="text"
+                  value={newElement.expectedValue}
+                  onChange={(e) => setNewElement({ ...newElement, expectedValue: e.target.value })}
+                  placeholder="e.g., Brand Safety"
+                  className="w-full px-3 py-2 border border-[#CAC8C7] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 font-ppsupply text-sm"
+                  style={{
+                    '--tw-ring-color': 'var(--primary-accent)',
+                    borderRadius: '8px',
+                  } as React.CSSProperties}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'var(--primary-accent)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#CAC8C7';
+                  }}
+                />
               </div>
             </div>
-          );
-        })}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleAddElement}
+                disabled={!newElement.label.trim() || !newElement.expectedValue.trim()}
+                className="px-4 py-2 text-white font-medium transition-colors font-ppsupply disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: 'var(--primary-accent)',
+                  borderRadius: '8px',
+                }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.backgroundColor = '#4845e4';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.backgroundColor = 'var(--primary-accent)';
+                  }
+                }}
+              >
+                Add Element
+              </button>
+              <button
+                onClick={handleCancelAdd}
+                className="px-4 py-2 text-gray-700 border border-[#CAC8C7] font-medium transition-colors font-ppsupply"
+                style={{
+                  borderRadius: '8px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--primary-accent)';
+                  e.currentTarget.style.color = 'var(--primary-accent)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#CAC8C7';
+                  e.currentTarget.style.color = '#374151';
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Elements List */}
+      <div className="p-6 max-h-96 overflow-y-auto">
+        <div className="space-y-3">
+          {localElements.map((element) => (
+            <motion.div
+              key={element.id}
+              className="flex items-start gap-3 p-3 border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+              onClick={() => handleToggle(element.id)}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--primary-accent)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e5e7eb';
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={element.selected}
+                onChange={() => handleToggle(element.id)}
+                className="mt-0.5 h-4 w-4 border-gray-300 rounded"
+                style={{
+                  accentColor: 'var(--primary-accent)',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900 font-ppsupply">
+                      {element.label}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-600 font-ppsupply break-all">
+                      {element.expectedValue}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* Footer */}

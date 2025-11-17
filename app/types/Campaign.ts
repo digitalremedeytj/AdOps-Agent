@@ -1,6 +1,5 @@
 export interface CampaignElement {
   id: string;
-  category: 'budget' | 'targeting' | 'creative' | 'dates' | 'placement' | 'other';
   label: string;
   expectedValue: string;
   selected: boolean;
@@ -34,7 +33,7 @@ export interface QASession {
 }
 
 export interface CampaignQAFormProps {
-  onSubmit: (campaignUrl: string, qaUrl: string) => void;
+  onSubmit: (campaignUrl: string, qaUrl: string, customInstructions?: string) => void;
 }
 
 export interface CampaignElementSelectorProps {

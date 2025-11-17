@@ -7,6 +7,8 @@ import posthog from "posthog-js";
 
 import { SessionControls } from "@/app/components/SessionControls";
 import BrowserSessionContainer from "@/app/components/BrowserSessionContainer";
+import YahooDSPAuthModal from "@/app/components/YahooDSPAuthModal";
+import { useYahooDSPAuth } from "@/app/hooks/useYahooDSPAuth";
 import { SessionLiveURLs } from "@browserbasehq/sdk/resources/index.mjs";
 import BrowserTabs from "@/app/components/ui/BrowserTabs";
 import NavBar from "@/app/components/NavBar";
@@ -59,6 +61,14 @@ export default function QAChatFeed({
   const [userInput, setUserInput] = useState("");
   const [isWaitingForInput, setIsWaitingForInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Yahoo DSP authentication
+  const { 
+    showAuthModal, 
+    authModalUrl, 
+    closeAuthModal, 
+    onAuthComplete: handleAuthComplete
+  } = useYahooDSPAuth();
 
   // Auto-focus input field when waiting for input
   useEffect(() => {
@@ -436,6 +446,21 @@ export default function QAChatFeed({
           </div>
         </motion.div>
       </main>
+
+      {/* Yahoo DSP Authentication Modal */}
+      <YahooDSPAuthModal
+        isOpen={showAuthModal}
+        onClose={closeAuthModal}
+        targetUrl={authModalUrl || undefined}
+        onAuthComplete={(sessionId, sessionUrl, targetUrl) => {
+          handleAuthComplete(sessionId, sessionUrl, targetUrl);
+          
+          // If we have a target URL, we could trigger navigation or other actions here
+          if (targetUrl) {
+            console.log('Authentication completed for target URL:', targetUrl);
+          }
+        }}
+      />
     </motion.div>
   );
 }

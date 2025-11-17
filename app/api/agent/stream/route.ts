@@ -1,6 +1,7 @@
 import { Stagehand } from "@browserbasehq/stagehand";
 import { createStagehandUserLogger } from "../../agent/logger";
 import { AGENT_INSTRUCTIONS } from "@/constants/prompt";
+import { shouldTriggerYahooDSPAuth } from "@/lib/yahoo-dsp-utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,6 +29,23 @@ export async function GET(request: Request) {
       JSON.stringify({ error: "Missing required params: sessionId and goal" }),
       {
         status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
+  // Check if goal contains Yahoo DSP URLs that require authentication
+  if (shouldTriggerYahooDSPAuth(goal)) {
+    console.log(`[SSE] Yahoo DSP URL detected in goal: ${goal}`);
+    return new Response(
+      JSON.stringify({ 
+        error: "Yahoo DSP authentication required",
+        requiresAuth: true,
+        authUrl: "/yahoo-dsp",
+        message: "This goal contains Yahoo DSP URLs that require authentication. Please complete the authentication flow first."
+      }),
+      {
+        status: 401,
         headers: { "Content-Type": "application/json" },
       }
     );
